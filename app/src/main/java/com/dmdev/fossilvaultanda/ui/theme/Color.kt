@@ -44,6 +44,15 @@ val GradientFilterEnd = Color(0xFF8B5CF6)
 val LogoGradientStart = Color(0xFFF59E0B) // Orange
 val LogoGradientEnd = Color(0xFFFBBF24) // Amber
 
+// Authentication specific colors
+val AuthBackgroundLight = Color(0xFFFAF9F6) // Cream/off-white background
+val AuthBackgroundDark = Color(0xFF121214) // Dark background
+val AuthInputBackgroundLight = Color(0xFFF3F4F6) // Light input background
+val AuthInputBackgroundDark = Color(0xFF161618) // Dark input background
+val AuthShadowOrange = Color(0xFFF59E0B) // Orange shadow for title
+val AuthGradientStart = Color(0xFF3B82F6) // Blue gradient start
+val AuthGradientEnd = Color(0xFF8B5CF6) // Purple gradient end
+
 // Geological period colors (light theme)
 val PeriodPrecambrianLight = Color(0xFF808080)
 val PeriodCambrianLight = Color(0xFF009ACC)
