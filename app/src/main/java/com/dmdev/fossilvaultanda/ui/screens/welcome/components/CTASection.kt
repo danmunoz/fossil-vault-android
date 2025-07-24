@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -148,7 +149,8 @@ fun CTASection(
                     containerColor = BackgroundSecondaryLight,
                     contentColor = MaterialTheme.colorScheme.onBackground
                 ),
-                border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(
+                border = BorderStroke(
+                    width = 1.dp,
                     brush = Brush.linearGradient(listOf(BorderLight, BorderLight))
                 ),
                 shape = RoundedCornerShape(FossilVaultRadius.lg)

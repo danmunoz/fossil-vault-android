@@ -1,15 +1,15 @@
 [versions]
 agp = "8.11.1"
-firebaseBom = "34.0.0"
-kotlin = "1.9.23"
+firebaseBom = "32.5.0"
+kotlin = "1.9.24"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
-composeBom = "2024.09.00"
-hilt = "2.56.2"
+composeBom = "2024.06.00"
+hilt = "2.48"
 hiltNavigationCompose = "1.1.0"
 lifecycleViewModelCompose = "2.7.0"
 navigationCompose = "2.7.6"
@@ -42,6 +42,5 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
