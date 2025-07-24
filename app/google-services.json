@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413687311403",
+    "project_id": "fossil-collector",
+    "storage_bucket": "fossil-collector.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413687311403:android:b2a686a7e1b68169a7ce6e",
+        "android_client_info": {
+          "package_name": "com.dmdev.fossilvaultanda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBuqVefAexeIxRUyQt1hChKPJbmao6TME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
