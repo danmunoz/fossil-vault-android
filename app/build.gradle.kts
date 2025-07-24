@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt.android)
     kotlin("kapt")
     id("com.google.gms.google-services")
@@ -67,6 +68,21 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.compiler)
+    
+    // Coroutines & Flow
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
+    
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+    
+    // Room (local caching)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+    
+    // Date handling
+    implementation(libs.kotlinx.datetime)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
