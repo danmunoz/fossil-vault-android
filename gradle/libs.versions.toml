@@ -17,6 +17,7 @@ coroutines = "1.7.3"
 serialization = "1.6.0"
 room = "2.6.0"
 datetime = "0.5.0"
+coil = "2.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +58,9 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 # Date handling
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
+
+# Image loading
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

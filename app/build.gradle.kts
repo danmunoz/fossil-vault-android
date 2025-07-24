@@ -84,6 +84,9 @@ dependencies {
     // Date handling
     implementation(libs.kotlinx.datetime)
     
+    // Image loading
+    implementation(libs.coil.compose)
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
