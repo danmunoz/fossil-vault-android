@@ -87,6 +87,9 @@ dependencies {
     // Image loading
     implementation(libs.coil.compose)
     
+    // Material Icons Extended
+    implementation(libs.androidx.material.icons.extended)
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
