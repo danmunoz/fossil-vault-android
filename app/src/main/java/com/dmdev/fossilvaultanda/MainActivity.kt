@@ -22,7 +22,9 @@ import com.dmdev.fossilvaultanda.ui.screens.detail.FossilDetailScreen
 import com.dmdev.fossilvaultanda.ui.screens.home.HomeScreen
 import com.dmdev.fossilvaultanda.ui.screens.profile.EditProfileScreen
 import com.dmdev.fossilvaultanda.ui.screens.profile.ProfileScreen
+import com.dmdev.fossilvaultanda.ui.screens.settings.CurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.settings.SettingsScreen
+import com.dmdev.fossilvaultanda.ui.screens.settings.SizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +52,7 @@ fun MainContent(authenticationManager: AuthenticationManager) {
     val authState by authenticationManager.authenticationState.collectAsState()
     var showAuthScreen by remember { mutableStateOf(false) }
     var currentSpecimenId by remember { mutableStateOf<String?>(null) }
-    var currentScreen by remember { mutableStateOf("home") } // home, settings, profile, editProfile
+    var currentScreen by remember { mutableStateOf("home") } // home, settings, profile, editProfile, sizeUnitPicker, currencyPicker
     val coroutineScope = rememberCoroutineScope()
     
     when (authState) {
@@ -80,6 +82,8 @@ fun MainContent(authenticationManager: AuthenticationManager) {
                             onNavigateBack = { currentScreen = "home" },
                             onNavigateToProfile = { currentScreen = "profile" },
                             onNavigateToAuth = { showAuthScreen = true },
+                            onNavigateToSizeUnitPicker = { currentScreen = "sizeUnitPicker" },
+                            onNavigateToCurrencyPicker = { currentScreen = "currencyPicker" },
                             authenticationManager = authenticationManager,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -96,6 +100,18 @@ fun MainContent(authenticationManager: AuthenticationManager) {
                         EditProfileScreen(
                             onNavigateBack = { currentScreen = "profile" },
                             onSave = { currentScreen = "profile" },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "sizeUnitPicker" -> {
+                        SizeUnitPickerScreen(
+                            onNavigateBack = { currentScreen = "settings" },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "currencyPicker" -> {
+                        CurrencyPickerScreen(
+                            onNavigateBack = { currentScreen = "settings" },
                             modifier = Modifier.fillMaxSize()
                         )
                     }

@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.authentication.domain.AuthenticationManager
+import com.dmdev.fossilvaultanda.data.models.AppSettings
+import com.dmdev.fossilvaultanda.ui.screens.settings.components.ConfigurationSection
 import com.dmdev.fossilvaultanda.ui.screens.settings.components.ProfileSection
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultSpacing
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
@@ -34,6 +36,8 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAuth: () -> Unit = {},
+    onNavigateToSizeUnitPicker: () -> Unit = {},
+    onNavigateToCurrencyPicker: () -> Unit = {},
     authenticationManager: AuthenticationManager? = null,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel()
@@ -86,7 +90,16 @@ fun SettingsScreen(
                 modifier = Modifier.padding(top = FossilVaultSpacing.md)
             )
             
-            // TODO: Add other sections (Configuration, Data Management, Support & Info)
+            // Configuration Section
+            ConfigurationSection(
+                appSettings = profile?.settings ?: AppSettings(),
+                authenticationState = authenticationState,
+                onDivideCarboniferousChanged = viewModel::updateDivideCarboniferous,
+                onNavigateToSizeUnitPicker = onNavigateToSizeUnitPicker,
+                onNavigateToCurrencyPicker = onNavigateToCurrencyPicker
+            )
+            
+            // TODO: Add other sections (Data Management, Support & Info)
             // These will be implemented in future tasks
         }
     }
