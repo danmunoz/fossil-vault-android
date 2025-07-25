@@ -17,6 +17,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,10 +70,25 @@ class FirestoreDataRepository @Inject constructor(
     private fun setupAuthStateListener() {
         authManager.isAuthenticated
             .onEach { isAuthenticated ->
-                Log.d("FirestoreRepo", "Auth state changed: $isAuthenticated")
+                Log.d("FirestoreRepo", "Auth state changed: isAuthenticated=$isAuthenticated")
                 if (isAuthenticated) {
-                    setupFirestoreListeners()
+                    // Add a small delay to ensure auth is fully established
+                    GlobalScope.launch {
+                        kotlinx.coroutines.delay(500) // Wait 500ms
+                        try {
+                            val userId = authManager.getCurrentUserId()
+                            Log.d("FirestoreRepo", "Setting up listeners for authenticated user: $userId")
+                            if (userId != null) {
+                                setupFirestoreListeners()
+                            } else {
+                                Log.w("FirestoreRepo", "User authenticated but no userId available")
+                            }
+                        } catch (e: Exception) {
+                            Log.e("FirestoreRepo", "Error setting up listeners after auth", e)
+                        }
+                    }
                 } else {
+                    Log.d("FirestoreRepo", "User not authenticated, removing listeners")
                     removeListeners()
                     clearLocalData()
                 }
@@ -84,6 +100,7 @@ class FirestoreDataRepository @Inject constructor(
         return authManager.getCurrentUserId() 
             ?: throw DataException.AuthenticationException("No user logged in")
     }
+    
     
     private fun setupFirestoreListeners() {
         GlobalScope.launch {
@@ -149,12 +166,24 @@ class FirestoreDataRepository @Inject constructor(
                         }
                         
                         snapshot?.let { documentSnapshot ->
+                            Log.d("FirestoreRepo", "Profile listener triggered - exists: ${documentSnapshot.exists()}")
+                            if (documentSnapshot.exists()) {
+                                Log.d("FirestoreRepo", "Profile document data: ${documentSnapshot.data}")
+                            }
+                            
                             val profile = try {
-                                documentSnapshot.toObject(UserProfile::class.java)
+                                if (documentSnapshot.exists()) {
+                                    parseUserProfileFromFirestore(documentSnapshot.data!!)
+                                } else {
+                                    Log.w("FirestoreRepo", "Profile document does not exist for user: $userId")
+                                    null
+                                }
                             } catch (e: Exception) {
                                 Log.e("FirestoreRepo", "Error parsing profile", e)
                                 null
                             }
+                            
+                            Log.d("FirestoreRepo", "Setting profile value: $profile")
                             _profile.value = profile
                         }
                     }
@@ -338,5 +367,45 @@ class FirestoreDataRepository @Inject constructor(
         _specimens.value = emptyList()
         _tags.value = emptyList()
         _profile.value = null
+    }
+    
+    private fun parseUserProfileFromFirestore(data: Map<String, Any>): UserProfile {
+        return UserProfile(
+            userId = data["userId"] as? String ?: "",
+            email = data["email"] as? String ?: "",
+            fullName = data["fullName"] as? String,
+            username = data["username"] as? String,
+            location = data["location"] as? String,
+            bio = data["bio"] as? String,
+            isPublic = data["isPublic"] as? Boolean ?: false,
+            picture = (data["picture"] as? Map<String, Any>)?.let { pictureMap ->
+                StoredImage(
+                    path = pictureMap["path"] as? String ?: "",
+                    url = pictureMap["url"] as? String ?: ""
+                )
+            },
+            settings = (data["settings"] as? Map<String, Any>)?.let { settingsMap ->
+                com.dmdev.fossilvaultanda.data.models.AppSettings(
+                    unit = parseSizeUnit(settingsMap["unit"] as? String),
+                    divideCarboniferous = settingsMap["divideCarboniferous"] as? Boolean ?: false,
+                    defaultCurrency = parseCurrency(settingsMap["defaultCurrency"] as? String)
+                )
+            } ?: com.dmdev.fossilvaultanda.data.models.AppSettings()
+        )
+    }
+    
+    private fun parseSizeUnit(value: String?): com.dmdev.fossilvaultanda.data.models.enums.SizeUnit {
+        return when (value) {
+            "mm" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.MM
+            "cm" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.CM
+            "inch" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.INCH
+            else -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.MM
+        }
+    }
+    
+    private fun parseCurrency(value: String?): com.dmdev.fossilvaultanda.data.models.enums.Currency {
+        return com.dmdev.fossilvaultanda.data.models.enums.Currency.values().find { 
+            it.currencyCode == value 
+        } ?: com.dmdev.fossilvaultanda.data.models.enums.Currency.USD
     }
 }

@@ -3,6 +3,7 @@ package com.dmdev.fossilvaultanda.authentication.di
 import com.dmdev.fossilvaultanda.authentication.data.AndroidFBAuthentication
 import com.dmdev.fossilvaultanda.authentication.domain.Authenticable
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +21,7 @@ object AuthenticationModule {
     @Provides
     @Singleton
     fun provideAuthenticable(
-        firebaseAuth: FirebaseAuth
-    ): Authenticable = AndroidFBAuthentication(firebaseAuth)
+        firebaseAuth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): Authenticable = AndroidFBAuthentication(firebaseAuth, firestore)
 }

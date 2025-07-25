@@ -6,6 +6,7 @@ import com.dmdev.fossilvaultanda.authentication.domain.UserProfile
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AndroidFBAuthentication @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : Authenticable {
     
     private val _profileSubject = MutableStateFlow<UserProfile?>(null)
@@ -113,7 +115,8 @@ class AndroidFBAuthentication @Inject constructor(
     private suspend fun signUpFromAnonymous(email: String, password: String) = 
         currentUser?.let { user ->
             val credential = EmailAuthProvider.getCredential(email, password)
-            user.linkWithCredential(credential).await()
+            val result = user.linkWithCredential(credential).await()
+            result
         } ?: throw IllegalStateException("Unable to convert anonymous user")
     
     override suspend fun signInAsLocalUser() {
@@ -149,6 +152,7 @@ class AndroidFBAuthentication @Inject constructor(
     override fun isLocalUser(): Boolean {
         return _authenticationState.value == AuthenticationState.LOCAL_USER
     }
+    
     
     override fun updateProfile(id: String, email: String, username: String, location: String) {
         currentUser?.updateProfile(

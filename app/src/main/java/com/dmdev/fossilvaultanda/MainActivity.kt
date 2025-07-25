@@ -20,6 +20,9 @@ import com.dmdev.fossilvaultanda.authentication.domain.AuthenticationState
 import com.dmdev.fossilvaultanda.authentication.ui.screens.AuthenticationScreen
 import com.dmdev.fossilvaultanda.ui.screens.detail.FossilDetailScreen
 import com.dmdev.fossilvaultanda.ui.screens.home.HomeScreen
+import com.dmdev.fossilvaultanda.ui.screens.profile.EditProfileScreen
+import com.dmdev.fossilvaultanda.ui.screens.profile.ProfileScreen
+import com.dmdev.fossilvaultanda.ui.screens.settings.SettingsScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +50,7 @@ fun MainContent(authenticationManager: AuthenticationManager) {
     val authState by authenticationManager.authenticationState.collectAsState()
     var showAuthScreen by remember { mutableStateOf(false) }
     var currentSpecimenId by remember { mutableStateOf<String?>(null) }
+    var currentScreen by remember { mutableStateOf("home") } // home, settings, profile, editProfile
     val coroutineScope = rememberCoroutineScope()
     
     when (authState) {
@@ -61,18 +65,50 @@ fun MainContent(authenticationManager: AuthenticationManager) {
                     modifier = Modifier.fillMaxSize()
                 )
             } ?: run {
-                // Show home screen
-                HomeScreen(
-                    authenticationManager = authenticationManager,
-                    onNavigateToSpecimen = { specimenId -> currentSpecimenId = specimenId },
-                    modifier = Modifier.fillMaxSize()
-                )
+                // Navigate between main screens
+                when (currentScreen) {
+                    "home" -> {
+                        HomeScreen(
+                            authenticationManager = authenticationManager,
+                            onNavigateToSpecimen = { specimenId -> currentSpecimenId = specimenId },
+                            onNavigateToSettings = { currentScreen = "settings" },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "settings" -> {
+                        SettingsScreen(
+                            onNavigateBack = { currentScreen = "home" },
+                            onNavigateToProfile = { currentScreen = "profile" },
+                            onNavigateToAuth = { showAuthScreen = true },
+                            authenticationManager = authenticationManager,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "profile" -> {
+                        ProfileScreen(
+                            onNavigateBack = { currentScreen = "settings" },
+                            onNavigateToEditProfile = { currentScreen = "editProfile" },
+                            onNavigateToAuth = { showAuthScreen = true },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "editProfile" -> {
+                        EditProfileScreen(
+                            onNavigateBack = { currentScreen = "profile" },
+                            onSave = { currentScreen = "profile" },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
             }
         }
         AuthenticationState.UNAUTHENTICATED -> {
             if (showAuthScreen) {
                 AuthenticationScreen(
-                    onDismiss = { showAuthScreen = false }
+                    onDismiss = { 
+                        showAuthScreen = false
+                        currentScreen = "home"
+                    }
                 )
             } else {
                 WelcomeScreen(
@@ -97,7 +133,10 @@ fun MainContent(authenticationManager: AuthenticationManager) {
             // Show loading or keep current screen
             if (showAuthScreen) {
                 AuthenticationScreen(
-                    onDismiss = { showAuthScreen = false }
+                    onDismiss = { 
+                        showAuthScreen = false
+                        currentScreen = "home"
+                    }
                 )
             } else {
                 WelcomeScreen(
