@@ -25,6 +25,13 @@ import com.dmdev.fossilvaultanda.ui.screens.profile.ProfileScreen
 import com.dmdev.fossilvaultanda.ui.screens.settings.CurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.settings.SettingsScreen
 import com.dmdev.fossilvaultanda.ui.screens.settings.SizeUnitPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenViewModel
+import com.dmdev.fossilvaultanda.ui.screens.specimen.ElementPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.LocationPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleCurrencyPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +59,12 @@ fun MainContent(authenticationManager: AuthenticationManager) {
     val authState by authenticationManager.authenticationState.collectAsState()
     var showAuthScreen by remember { mutableStateOf(false) }
     var currentSpecimenId by remember { mutableStateOf<String?>(null) }
-    var currentScreen by remember { mutableStateOf("home") } // home, settings, profile, editProfile, sizeUnitPicker, currencyPicker
+    var currentScreen by remember { mutableStateOf("home") } // home, settings, profile, editProfile, sizeUnitPicker, currencyPicker, addSpecimen, periodPicker, elementPicker, locationPicker
+    var addSpecimenViewModel: AddSpecimenViewModel? by remember { mutableStateOf(null) }
+    var selectedPeriod by remember { mutableStateOf<com.dmdev.fossilvaultanda.data.models.enums.Period?>(null) }
+    var selectedElement by remember { mutableStateOf<com.dmdev.fossilvaultanda.data.models.enums.FossilElement?>(null) }
+    var customElementText by remember { mutableStateOf("") }
+    var currencyPickerContext by remember { mutableStateOf("") } // "price" or "value"
     val coroutineScope = rememberCoroutineScope()
     
     when (authState) {
@@ -74,6 +86,7 @@ fun MainContent(authenticationManager: AuthenticationManager) {
                             authenticationManager = authenticationManager,
                             onNavigateToSpecimen = { specimenId -> currentSpecimenId = specimenId },
                             onNavigateToSettings = { currentScreen = "settings" },
+                            onAddSpecimen = { currentScreen = "addSpecimen" },
                             modifier = Modifier.fillMaxSize()
                         )
                     }
@@ -104,14 +117,137 @@ fun MainContent(authenticationManager: AuthenticationManager) {
                         )
                     }
                     "sizeUnitPicker" -> {
-                        SizeUnitPickerScreen(
-                            onNavigateBack = { currentScreen = "settings" },
+                        if (addSpecimenViewModel != null) {
+                            // Size unit picker for Add Specimen screen
+                            SimpleSizeUnitPickerScreen(
+                                onNavigateBack = { currentScreen = "addSpecimen" },
+                                onSizeUnitSelected = { sizeUnit ->
+                                    addSpecimenViewModel?.updateSizeUnit(sizeUnit)
+                                    currentScreen = "addSpecimen"
+                                },
+                                selectedSizeUnit = addSpecimenViewModel?.formState?.value?.unit,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            // Original size unit picker for Settings
+                            SizeUnitPickerScreen(
+                                onNavigateBack = { currentScreen = "settings" },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+                    "currencyPicker" -> {
+                        if (currencyPickerContext.isNotEmpty()) {
+                            // Currency picker for Add Specimen screen - use a simple list for now
+                            SimpleCurrencyPickerScreen(
+                                onNavigateBack = { 
+                                    currentScreen = "addSpecimen"
+                                    currencyPickerContext = ""
+                                },
+                                onCurrencySelected = { currency ->
+                                    when (currencyPickerContext) {
+                                        "price" -> addSpecimenViewModel?.updatePricePaid(
+                                            addSpecimenViewModel?.formState?.value?.pricePaid, 
+                                            currency
+                                        )
+                                        "value" -> addSpecimenViewModel?.updateEstimatedValue(
+                                            addSpecimenViewModel?.formState?.value?.estimatedValue, 
+                                            currency
+                                        )
+                                    }
+                                    currentScreen = "addSpecimen"
+                                    currencyPickerContext = ""
+                                },
+                                selectedCurrency = when (currencyPickerContext) {
+                                    "price" -> addSpecimenViewModel?.formState?.value?.pricePaidCurrency
+                                    "value" -> addSpecimenViewModel?.formState?.value?.estimatedValueCurrency
+                                    else -> null
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            // Original currency picker for Settings
+                            CurrencyPickerScreen(
+                                onNavigateBack = { currentScreen = "settings" },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+                    "addSpecimen" -> {
+                        val viewModel: AddSpecimenViewModel = hiltViewModel()
+                        addSpecimenViewModel = viewModel // Store the ViewModel reference
+                        
+                        AddSpecimenScreen(
+                            onNavigateBack = { 
+                                currentScreen = "home"
+                                addSpecimenViewModel = null // Clear ViewModel when leaving
+                            },
+                            onNavigateToPeriodPicker = { 
+                                selectedPeriod = viewModel.formState.value.period
+                                currentScreen = "periodPicker" 
+                            },
+                            onNavigateToElementPicker = { 
+                                selectedElement = viewModel.formState.value.element
+                                customElementText = viewModel.formState.value.customElement
+                                currentScreen = "elementPicker" 
+                            },
+                            onNavigateToSizeUnitPicker = { currentScreen = "sizeUnitPicker" },
+                            onNavigateToCurrencyPicker = { context -> 
+                                currencyPickerContext = context
+                                currentScreen = "currencyPicker" 
+                            },
+                            onNavigateToLocationPicker = { currentScreen = "locationPicker" },
+                            viewModel = viewModel,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    "currencyPicker" -> {
-                        CurrencyPickerScreen(
-                            onNavigateBack = { currentScreen = "settings" },
+                    "periodPicker" -> {
+                        PeriodPickerScreen(
+                            onNavigateBack = { currentScreen = "addSpecimen" },
+                            onPeriodSelected = { period ->
+                                addSpecimenViewModel?.updatePeriod(period)
+                                selectedPeriod = period
+                                currentScreen = "addSpecimen" // Navigate back immediately
+                            },
+                            selectedPeriod = selectedPeriod,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "elementPicker" -> {
+                        ElementPickerScreen(
+                            onNavigateBack = { currentScreen = "addSpecimen" },
+                            onElementSelected = { element, customText ->
+                                addSpecimenViewModel?.updateElement(element)
+                                // TODO: Handle custom element text properly
+                                selectedElement = element
+                                customElementText = customText
+                                currentScreen = "addSpecimen" // Navigate back immediately
+                            },
+                            selectedElement = selectedElement,
+                            customElementText = customElementText,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    "locationPicker" -> {
+                        LocationPickerScreen(
+                            onNavigateBack = { currentScreen = "addSpecimen" },
+                            onLocationSelected = { locationData ->
+                                addSpecimenViewModel?.updateLocation(
+                                    location = locationData.address,
+                                    latitude = locationData.latitude,
+                                    longitude = locationData.longitude
+                                )
+                                currentScreen = "addSpecimen"
+                            },
+                            initialLocation = addSpecimenViewModel?.formState?.value?.let { formState ->
+                                if (formState.latitude != null && formState.longitude != null) {
+                                    com.dmdev.fossilvaultanda.ui.screens.specimen.LocationData(
+                                        latitude = formState.latitude,
+                                        longitude = formState.longitude,
+                                        address = formState.location
+                                    )
+                                } else null
+                            },
                             modifier = Modifier.fillMaxSize()
                         )
                     }

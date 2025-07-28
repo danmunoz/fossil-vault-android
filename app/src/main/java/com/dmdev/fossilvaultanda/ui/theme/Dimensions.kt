@@ -50,3 +50,12 @@ object FossilVaultAnimations {
     const val normal = 300
     const val slow = 500
 }
+
+// Alias for backward compatibility and cleaner code
+object Dimensions {
+    val small = FossilVaultSpacing.sm
+    val medium = FossilVaultSpacing.md
+    val large = FossilVaultSpacing.lg
+    val extraLarge = FossilVaultSpacing.xl
+    val xxLarge = FossilVaultSpacing.xxl
+}
