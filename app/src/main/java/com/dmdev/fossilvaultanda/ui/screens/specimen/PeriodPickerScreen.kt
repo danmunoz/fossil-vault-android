@@ -1,5 +1,6 @@
 package com.dmdev.fossilvaultanda.ui.screens.specimen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,11 @@ fun PeriodPickerScreen(
     viewModel: PeriodPickerViewModel = hiltViewModel()
 ) {
     val userProfile by viewModel.userProfile.collectAsState(initial = null)
+    
+    // Handle system back button
+    BackHandler {
+        onNavigateBack()
+    }
     
     // Get periods based on user settings
     val divideCarboniferous = userProfile?.settings?.divideCarboniferous ?: false

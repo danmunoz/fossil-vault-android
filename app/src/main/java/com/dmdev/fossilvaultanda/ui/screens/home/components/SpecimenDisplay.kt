@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
@@ -34,6 +35,7 @@ fun SpecimenGrid(
     specimens: List<Specimen>,
     onSpecimenClick: (Specimen) -> Unit = {},
     onSpecimenAction: (Specimen) -> Unit = {},
+    headerContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     if (specimens.isEmpty()) {
@@ -49,6 +51,12 @@ fun SpecimenGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            headerContent?.let { content ->
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    content()
+                }
+            }
+            
             items(specimens) { specimen ->
                 SpecimenCard(
                     specimen = specimen,
@@ -65,6 +73,7 @@ fun SpecimenList(
     specimens: List<Specimen>,
     onSpecimenClick: (Specimen) -> Unit = {},
     onSpecimenAction: (Specimen) -> Unit = {},
+    headerContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     if (specimens.isEmpty()) {
@@ -78,6 +87,12 @@ fun SpecimenList(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            headerContent?.let { content ->
+                item {
+                    content()
+                }
+            }
+            
             items(specimens) { specimen ->
                 SpecimenListItem(
                     specimen = specimen,

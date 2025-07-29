@@ -1,5 +1,6 @@
 package com.dmdev.fossilvaultanda.ui.screens.specimen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,11 @@ fun ElementPickerScreen(
 ) {
     var customText by remember { mutableStateOf(customElementText) }
     val focusManager = LocalFocusManager.current
+    
+    // Handle system back button
+    BackHandler {
+        onNavigateBack()
+    }
     
     val elements = FossilElement.values().toList()
 

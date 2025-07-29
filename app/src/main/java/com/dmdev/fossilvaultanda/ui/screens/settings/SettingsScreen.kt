@@ -1,5 +1,6 @@
 package com.dmdev.fossilvaultanda.ui.screens.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +45,11 @@ fun SettingsScreen(
 ) {
     val profile by viewModel.userProfile.collectAsState()
     val authenticationState by viewModel.authenticationState.collectAsState()
+    
+    // Handle system back button
+    BackHandler {
+        onNavigateBack()
+    }
     
     Scaffold(
         modifier = modifier.fillMaxSize(),

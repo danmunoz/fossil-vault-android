@@ -1,5 +1,6 @@
 package com.dmdev.fossilvaultanda.ui.screens.specimen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,6 +79,11 @@ fun AddSpecimenScreen(
     val uiState by viewModel.uiState.collectAsState()
     val validationErrors by viewModel.validationErrors.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    
+    // Handle system back button
+    BackHandler {
+        onNavigateBack()
+    }
 
     // Handle save success/error
     LaunchedEffect(uiState.saveSuccess, uiState.saveError) {

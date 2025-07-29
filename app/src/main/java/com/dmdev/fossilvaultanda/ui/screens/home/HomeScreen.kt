@@ -61,50 +61,54 @@ fun HomeScreen(
             }
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            // Search and period filter section
-            SearchAndFilterSection(
-                searchQuery = searchQuery,
-                onSearchQueryChange = viewModel::updateSearchQuery,
-                selectedPeriod = selectedPeriod,
-                onPeriodChange = viewModel::updateSelectedPeriod,
-                resultCount = filteredSpecimens.size
-            )
-            
-            // Sort and display mode controls
-            FilterSection(
-                sortOption = sortOption,
-                onSortChange = viewModel::updateSortOption,
-                displayMode = displayMode,
-                onDisplayModeChange = viewModel::updateDisplayMode
-            )
-            
-            // Specimen display based on mode
-            when (displayMode) {
-                DisplayMode.GRID -> {
-                    SpecimenGrid(
-                        specimens = filteredSpecimens,
-                        onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
-                        onSpecimenAction = { specimen -> 
-                            // TODO: Show bottom sheet or context menu
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                DisplayMode.LIST -> {
-                    SpecimenList(
-                        specimens = filteredSpecimens,
-                        onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
-                        onSpecimenAction = { specimen -> 
-                            // TODO: Show bottom sheet or context menu
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+        val headerContent = @Composable {
+            Column {
+                // Search and period filter section
+                SearchAndFilterSection(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = viewModel::updateSearchQuery,
+                    selectedPeriod = selectedPeriod,
+                    onPeriodChange = viewModel::updateSelectedPeriod,
+                    resultCount = filteredSpecimens.size
+                )
+                
+                // Sort and display mode controls
+                FilterSection(
+                    sortOption = sortOption,
+                    onSortChange = viewModel::updateSortOption,
+                    displayMode = displayMode,
+                    onDisplayModeChange = viewModel::updateDisplayMode
+                )
+            }
+        }
+        
+        // Specimen display based on mode
+        when (displayMode) {
+            DisplayMode.GRID -> {
+                SpecimenGrid(
+                    specimens = filteredSpecimens,
+                    onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
+                    onSpecimenAction = { specimen -> 
+                        // TODO: Show bottom sheet or context menu
+                    },
+                    headerContent = headerContent,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                )
+            }
+            DisplayMode.LIST -> {
+                SpecimenList(
+                    specimens = filteredSpecimens,
+                    onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
+                    onSpecimenAction = { specimen -> 
+                        // TODO: Show bottom sheet or context menu
+                    },
+                    headerContent = headerContent,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                )
             }
         }
     }
