@@ -22,6 +22,29 @@ enum class Period(val displayName: String) {
     @SerialName("quaternary") QUATERNARY("Quaternary"),
     @SerialName("unknown") UNKNOWN("Unknown");
     
+    /**
+     * Gets the serialized name for Firebase storage (lowercase)
+     */
+    val serializedName: String
+        get() = when (this) {
+            PRECAMBRIAN -> "precambrian"
+            CAMBRIAN -> "cambrian"
+            ORDOVICIAN -> "ordovician"
+            SILURIAN -> "silurian"
+            DEVONIAN -> "devonian"
+            CARBONIFEROUS -> "carboniferous"
+            MISSISSIPPIAN -> "mississippian"
+            PENNSYLVANIAN -> "pennsylvanian"
+            PERMIAN -> "permian"
+            TRIASSIC -> "triassic"
+            JURASSIC -> "jurassic"
+            CRETACEOUS -> "cretaceous"
+            PALEOCENE -> "paleocene"
+            NEOGENE -> "neogene"
+            QUATERNARY -> "quaternary"
+            UNKNOWN -> "unknown"
+        }
+    
     companion object {
         fun getAllCases(divideCarboniferous: Boolean): List<Period> {
             val base = listOf(
@@ -37,6 +60,18 @@ enum class Period(val displayName: String) {
                 PALEOCENE, NEOGENE, QUATERNARY, UNKNOWN
             )
             return base + carboniferous + remaining
+        }
+        
+        /**
+         * Parse from serialized name (case-insensitive for backwards compatibility)
+         */
+        fun fromSerializedName(name: String?): Period {
+            if (name == null) return UNKNOWN
+            return values().find { 
+                it.serializedName.equals(name, ignoreCase = true) ||
+                it.name.equals(name, ignoreCase = true) ||
+                it.displayName.equals(name, ignoreCase = true)
+            } ?: UNKNOWN
         }
     }
 }

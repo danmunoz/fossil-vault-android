@@ -27,4 +27,25 @@ data class UserProfile(
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+    
+    /**
+     * Converts the UserProfile to a Map for Firebase storage with proper enum serialization
+     */
+    fun toFirestoreMap(): Map<String, Any?> {
+        return mapOf(
+            "userId" to userId,
+            "email" to email,
+            "fullName" to fullName,
+            "username" to username,
+            "location" to location,
+            "bio" to bio,
+            "isPublic" to isPublic,
+            "picture" to picture?.let { mapOf("url" to it.url, "path" to it.path) },
+            "settings" to mapOf(
+                "unit" to settings.unit.serializedName,
+                "divideCarboniferous" to settings.divideCarboniferous,
+                "defaultCurrency" to settings.defaultCurrency.serializedName
+            )
+        )
+    }
 }

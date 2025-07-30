@@ -105,6 +105,44 @@ data class Specimen(
         }
     }
     
+    /**
+     * Converts the Specimen to a Map for Firebase storage with proper enum serialization
+     */
+    fun toFirestoreMap(): Map<String, Any?> {
+        return mapOf(
+            "id" to id,
+            "userId" to userId,
+            "species" to species,
+            "period" to period.serializedName,
+            "element" to element.serializedName,
+            "location" to location,
+            "formation" to formation,
+            "latitude" to latitude,
+            "longitude" to longitude,
+            "width" to width,
+            "height" to height,
+            "length" to length,
+            "unit" to unit.serializedName,
+            "collectionDate" to collectionDate?.let { 
+                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond) 
+            },
+            "acquisitionDate" to acquisitionDate?.let { 
+                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond) 
+            },
+            "creationDate" to com.google.firebase.Timestamp(creationDate.epochSeconds, creationDate.nanosecondsOfSecond),
+            "inventoryId" to inventoryId,
+            "notes" to notes,
+            "imageUrls" to imageUrls.map { mapOf("url" to it.url, "path" to it.path) },
+            "isFavorite" to isFavorite,
+            "tagNames" to tagNames,
+            "isPublic" to isPublic,
+            "pricePaid" to pricePaid,
+            "pricePaidCurrency" to pricePaidCurrency?.serializedName,
+            "estimatedValue" to estimatedValue,
+            "estimatedValueCurrency" to estimatedValueCurrency?.serializedName
+        )
+    }
+    
     companion object {
         const val CSV_HEADER = "Identifier,Species,Period,Element,Location,Formation," +
                 "Latitude,Longitude,Width,Height,Length,Unit,Collection Date," +

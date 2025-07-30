@@ -213,7 +213,7 @@ class FirestoreDataRepository @Inject constructor(
             
             firestore.collection("specimens")
                 .document(updatedSpecimen.id)
-                .set(updatedSpecimen)
+                .set(updatedSpecimen.toFirestoreMap())
                 .await()
         } catch (e: Exception) {
             throw DataException.FirestoreException("Failed to save specimen", e)
@@ -331,7 +331,7 @@ class FirestoreDataRepository @Inject constructor(
             
             firestore.collection("users")
                 .document(profile.userId)
-                .set(updatedProfile)
+                .set(updatedProfile.toFirestoreMap())
                 .await()
         } catch (e: Exception) {
             throw DataException.FirestoreException("Failed to update profile", e)
@@ -395,17 +395,10 @@ class FirestoreDataRepository @Inject constructor(
     }
     
     private fun parseSizeUnit(value: String?): com.dmdev.fossilvaultanda.data.models.enums.SizeUnit {
-        return when (value) {
-            "mm" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.MM
-            "cm" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.CM
-            "inch" -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.INCH
-            else -> com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.MM
-        }
+        return com.dmdev.fossilvaultanda.data.models.enums.SizeUnit.fromSerializedName(value)
     }
     
     private fun parseCurrency(value: String?): com.dmdev.fossilvaultanda.data.models.enums.Currency {
-        return com.dmdev.fossilvaultanda.data.models.enums.Currency.values().find { 
-            it.currencyCode == value 
-        } ?: com.dmdev.fossilvaultanda.data.models.enums.Currency.USD
+        return com.dmdev.fossilvaultanda.data.models.enums.Currency.fromSerializedName(value)
     }
 }

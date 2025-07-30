@@ -54,8 +54,8 @@ data class FirestoreSpecimen(
             id = id,
             userId = userId,
             species = species,
-            period = Period.values().find { it.name.lowercase() == period.lowercase() } ?: Period.UNKNOWN,
-            element = FossilElement.values().find { it.name.lowercase() == element.lowercase() } ?: FossilElement.OTHER,
+            period = Period.fromSerializedName(period),
+            element = FossilElement.fromSerializedName(element),
             location = location,
             formation = formation,
             latitude = latitude,
@@ -63,7 +63,7 @@ data class FirestoreSpecimen(
             width = width,
             height = height,
             length = length,
-            unit = SizeUnit.values().find { it.name.lowercase() == unit.lowercase() } ?: SizeUnit.MM,
+            unit = SizeUnit.fromSerializedName(unit),
             collectionDate = collectionDate?.let { 
                 Instant.fromEpochSeconds(it.seconds, it.nanoseconds) 
             },
@@ -86,13 +86,9 @@ data class FirestoreSpecimen(
             tagNames = tagNames,
             isPublic = isPublic,
             pricePaid = pricePaid,
-            pricePaidCurrency = pricePaidCurrency?.let { 
-                Currency.values().find { it.name == pricePaidCurrency } 
-            },
+            pricePaidCurrency = Currency.fromSerializedName(pricePaidCurrency),
             estimatedValue = estimatedValue,
-            estimatedValueCurrency = estimatedValueCurrency?.let { 
-                Currency.values().find { it.name == estimatedValueCurrency } 
-            }
+            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency)
         )
     }
 }

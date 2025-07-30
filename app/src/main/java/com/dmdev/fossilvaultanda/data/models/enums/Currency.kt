@@ -40,6 +40,12 @@ enum class Currency(
     @SerialName("THB") THB("THB", "฿", "Thai Baht"),
     @SerialName("MYR") MYR("MYR", "RM", "Malaysian Ringgit");
     
+    /**
+     * Gets the serialized name for Firebase storage (currency code)
+     */
+    val serializedName: String
+        get() = currencyCode
+    
     companion object {
         fun getDeviceDefault(): Currency {
             val locale = Locale.getDefault()
@@ -50,6 +56,17 @@ enum class Currency(
             }
             
             return values().find { it.currencyCode == currencyCode } ?: USD
+        }
+        
+        /**
+         * Parse from serialized name (case-insensitive for backwards compatibility)
+         */
+        fun fromSerializedName(name: String?): Currency {
+            if (name == null) return getDeviceDefault()
+            return values().find { 
+                it.currencyCode.equals(name, ignoreCase = true) ||
+                it.name.equals(name, ignoreCase = true)
+            } ?: getDeviceDefault()
         }
         
         fun formatAmount(amount: Double, currency: Currency): String {
