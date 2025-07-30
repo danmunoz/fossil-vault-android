@@ -221,9 +221,8 @@ class AddSpecimenViewModel @Inject constructor(
             errors["species"] = "Species name is required"
         }
 
-        if (state.period == Period.UNKNOWN) {
-            errors["period"] = "Please select a geological period"
-        }
+        // Period is required, but Period.UNKNOWN is a valid selection
+        // No validation needed here as all Period enum values are valid
 
         if (state.element == FossilElement.OTHER && state.customElement.isBlank()) {
             errors["element"] = "Please specify the fossil element"

@@ -94,7 +94,6 @@ fun PeriodPickerScreen(
                     isSelected = period == selectedPeriod,
                     onClick = {
                         onPeriodSelected(period)
-                        onNavigateBack()
                     }
                 )
             }

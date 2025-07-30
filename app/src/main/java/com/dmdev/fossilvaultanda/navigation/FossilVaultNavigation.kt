@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -213,27 +214,41 @@ fun FossilVaultNavigation(
         }
         
         composable<FossilVaultRoute.PeriodPicker> {
+            val parentEntry = remember(navController) {
+                navController.getBackStackEntry(FossilVaultRoute.AddSpecimen)
+            }
+            val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
+            
             PeriodPickerScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
                 onPeriodSelected = { period ->
-                    // TODO: Pass result back to AddSpecimen screen
+                    addSpecimenViewModel.updatePeriod(period)
                     navController.navigateUp()
                 },
+                selectedPeriod = addSpecimenViewModel.formState.collectAsState().value.period,
                 modifier = Modifier.fillMaxSize()
             )
         }
         
         composable<FossilVaultRoute.ElementPicker> {
+            val parentEntry = remember(navController) {
+                navController.getBackStackEntry(FossilVaultRoute.AddSpecimen)
+            }
+            val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
+            val formState = addSpecimenViewModel.formState.collectAsState().value
+            
             ElementPickerScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
                 onElementSelected = { element, customText ->
-                    // TODO: Pass result back to AddSpecimen screen
+                    addSpecimenViewModel.updateElement(element)
                     navController.navigateUp()
                 },
+                selectedElement = formState.element,
+                customElementText = formState.customElement,
                 modifier = Modifier.fillMaxSize()
             )
         }

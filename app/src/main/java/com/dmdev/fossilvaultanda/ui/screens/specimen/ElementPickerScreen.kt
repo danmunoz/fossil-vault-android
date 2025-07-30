@@ -101,7 +101,6 @@ fun ElementPickerScreen(
                             onElementSelected(element, customText)
                         } else {
                             onElementSelected(element, "")
-                            onNavigateBack()
                         }
                     }
                 )

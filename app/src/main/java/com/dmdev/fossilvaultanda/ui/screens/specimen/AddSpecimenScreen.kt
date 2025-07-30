@@ -54,6 +54,8 @@ import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DatePickerField
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DimensionInputRow
+import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ImagePickerManager
+import com.dmdev.fossilvaultanda.ui.screens.specimen.components.PhotoGrid
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.SectionHeader
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.SelectionField
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ValidatedNumericField
@@ -257,25 +259,19 @@ private fun PhotoSection(
         
         Spacer(modifier = Modifier.height(Dimensions.medium))
         
-        // TODO: Implement photo grid component
-        OutlinedButton(
-            onClick = { /* TODO: Open camera/gallery */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                imageVector = Icons.Default.Camera,
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Add Photos")
-        }
-        
-        if (images.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${images.size} photo(s) added",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+        // Photo grid with image picker
+        ImagePickerManager(
+            maxImages = 3,
+            currentImages = images,
+            onImagesSelected = onImagesChanged
+        ) { openPicker ->
+            PhotoGrid(
+                images = images,
+                maxImages = 3,
+                onAddPhotos = openPicker,
+                onRemoveImage = { imageToRemove ->
+                    onImagesChanged(images.filter { it != imageToRemove })
+                }
             )
         }
     }

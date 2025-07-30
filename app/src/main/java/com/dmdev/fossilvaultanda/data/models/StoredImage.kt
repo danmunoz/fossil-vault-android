@@ -9,5 +9,5 @@ data class StoredImage(
 ) {
     constructor(url: String) : this(url, url)
     
-    val isLocal: Boolean get() = url.startsWith("file://")
+    val isLocal: Boolean get() = url.startsWith("file://") || url.startsWith("content://")
 }
