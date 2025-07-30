@@ -41,7 +41,7 @@ sealed class FossilVaultRoute {
     
     // Add Specimen Flow
     @Serializable
-    data object AddSpecimen : FossilVaultRoute()
+    data class AddSpecimen(val specimenId: String? = null) : FossilVaultRoute()
     
     @Serializable
     data object PeriodPicker : FossilVaultRoute()

@@ -62,6 +62,23 @@ class AddSpecimenViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isEditMode = true)
     }
 
+    fun initializeForEdit(specimenId: String) {
+        viewModelScope.launch {
+            try {
+                val specimen = databaseManager.getSpecimen(specimenId)
+                specimen?.let {
+                    editingSpecimen = it
+                    _formState.value = SpecimenFormState.fromSpecimen(it)
+                    _uiState.value = _uiState.value.copy(isEditMode = true)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    saveError = "Failed to load specimen for editing: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun updateSpecies(species: String) {
         _formState.value = _formState.value.copy(species = species)
         clearValidationError("species")

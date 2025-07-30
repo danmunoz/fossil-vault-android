@@ -98,7 +98,7 @@ fun FossilVaultNavigation(
                     navController.navigate(FossilVaultRoute.Settings)
                 },
                 onAddSpecimen = {
-                    navController.navigate(FossilVaultRoute.AddSpecimen)
+                    navController.navigate(FossilVaultRoute.AddSpecimen())
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -111,7 +111,9 @@ fun FossilVaultNavigation(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
-                onEditSpecimen = { /* TODO: Implement edit navigation */ },
+                onEditSpecimen = { specimenId ->
+                    navController.navigate(FossilVaultRoute.AddSpecimen(specimenId))
+                },
                 onShareSpecimen = { /* TODO: Implement share functionality */ },
                 modifier = Modifier.fillMaxSize()
             )
@@ -186,8 +188,14 @@ fun FossilVaultNavigation(
         }
         
         // Add Specimen Flow
-        composable<FossilVaultRoute.AddSpecimen> {
+        composable<FossilVaultRoute.AddSpecimen> { backStackEntry ->
+            val route = backStackEntry.toRoute<FossilVaultRoute.AddSpecimen>()
             val viewModel: AddSpecimenViewModel = hiltViewModel()
+            
+            // Initialize for edit mode if specimen ID provided
+            route.specimenId?.let { specimenId ->
+                viewModel.initializeForEdit(specimenId)
+            }
             
             AddSpecimenScreen(
                 onNavigateBack = {
@@ -215,7 +223,9 @@ fun FossilVaultNavigation(
         
         composable<FossilVaultRoute.PeriodPicker> {
             val parentEntry = remember(navController) {
-                navController.getBackStackEntry(FossilVaultRoute.AddSpecimen)
+                navController.currentBackStack.value.first { entry ->
+                    entry.destination.route?.contains("AddSpecimen") == true
+                }
             }
             val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
             
@@ -234,7 +244,9 @@ fun FossilVaultNavigation(
         
         composable<FossilVaultRoute.ElementPicker> {
             val parentEntry = remember(navController) {
-                navController.getBackStackEntry(FossilVaultRoute.AddSpecimen)
+                navController.currentBackStack.value.first { entry ->
+                    entry.destination.route?.contains("AddSpecimen") == true
+                }
             }
             val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
             val formState = addSpecimenViewModel.formState.collectAsState().value

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,12 +35,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,6 +84,7 @@ fun AddSpecimenScreen(
     val uiState by viewModel.uiState.collectAsState()
     val validationErrors by viewModel.validationErrors.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showEditConfirmationDialog by remember { mutableStateOf(false) }
 
     // Handle save success/error
     LaunchedEffect(uiState.saveSuccess, uiState.saveError) {
@@ -120,7 +125,13 @@ fun AddSpecimenScreen(
                         }
                     } else {
                         Button(
-                            onClick = { viewModel.saveSpecimen() },
+                            onClick = { 
+                                if (uiState.isEditMode) {
+                                    showEditConfirmationDialog = true
+                                } else {
+                                    viewModel.saveSpecimen()
+                                }
+                            },
                             modifier = Modifier.padding(end = 8.dp)
                         ) {
                             Text(if (uiState.isEditMode) "Update" else "Save")
@@ -241,6 +252,32 @@ fun AddSpecimenScreen(
 
             Spacer(modifier = Modifier.height(Dimensions.xxLarge))
         }
+    }
+    
+    // Edit Confirmation Dialog
+    if (showEditConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditConfirmationDialog = false },
+            title = { Text("Confirm Changes") },
+            text = { Text("Do you want to save the changes to this specimen?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showEditConfirmationDialog = false
+                        viewModel.saveSpecimen()
+                    }
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showEditConfirmationDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
