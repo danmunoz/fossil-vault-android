@@ -1,6 +1,5 @@
 package com.dmdev.fossilvaultanda.ui.screens.specimen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -52,15 +52,10 @@ fun PeriodPickerScreen(
 ) {
     val userProfile by viewModel.userProfile.collectAsState(initial = null)
     
-    // Handle system back button
-    BackHandler {
-        onNavigateBack()
-    }
-    
     // Get periods based on user settings
     val divideCarboniferous = userProfile?.settings?.divideCarboniferous ?: false
     val periods = Period.getAllCases(divideCarboniferous)
-
+    val state = rememberLazyListState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -86,7 +81,8 @@ fun PeriodPickerScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = Dimensions.medium),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state =state,
         ) {
             item {
                 Spacer(modifier = Modifier.height(Dimensions.small))

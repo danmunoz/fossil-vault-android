@@ -80,45 +80,7 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-    
-    init {
-        Log.d("HomeViewModel", "HomeViewModel initialized")
-        // Force a manual check
-        viewModelScope.launch {
-            try {
-                val allSpecimens = repository.getAllSpecimens()
-                Log.d("HomeViewModel", "Manual query result: ${allSpecimens.size} specimens")
-                
-                // Also test a direct Firestore query to see raw data
-                testDirectFirestoreQuery()
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Manual query failed", e)
-            }
-        }
-    }
-    
-    private suspend fun testDirectFirestoreQuery() {
-        try {
-            // Get direct access to Firestore to test raw queries
-            val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-            firestore.collection("specimens")
-                .limit(5)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    Log.d("HomeViewModel", "Direct query found ${querySnapshot.documents.size} documents")
-                    for (doc in querySnapshot.documents) {
-                        Log.d("HomeViewModel", "Doc ID: ${doc.id}")
-                        Log.d("HomeViewModel", "Doc data: ${doc.data}")
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("HomeViewModel", "Direct query failed", e)
-                }
-        } catch (e: Exception) {
-            Log.e("HomeViewModel", "Error in direct query", e)
-        }
-    }
-    
+
     // Actions
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query

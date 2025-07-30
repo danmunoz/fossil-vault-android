@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -38,6 +41,7 @@ fun SpecimenGrid(
     headerContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val state = rememberLazyGridState()
     if (specimens.isEmpty()) {
         EmptyState(
             message = "No specimens found",
@@ -49,7 +53,8 @@ fun SpecimenGrid(
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            state = state,
         ) {
             headerContent?.let { content ->
                 item(span = { GridItemSpan(maxLineSpan) }) {
@@ -57,7 +62,7 @@ fun SpecimenGrid(
                 }
             }
             
-            items(specimens) { specimen ->
+            items(specimens,key = {it.id}) { specimen ->
                 SpecimenCard(
                     specimen = specimen,
                     onCardClick = { onSpecimenClick(specimen) },
@@ -76,6 +81,7 @@ fun SpecimenList(
     headerContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val state = rememberLazyListState()
     if (specimens.isEmpty()) {
         EmptyState(
             message = "No specimens found",
@@ -85,7 +91,8 @@ fun SpecimenList(
         LazyColumn(
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = state,
         ) {
             headerContent?.let { content ->
                 item {
@@ -93,7 +100,7 @@ fun SpecimenList(
                 }
             }
             
-            items(specimens) { specimen ->
+            items(specimens, key = {it.id}) { specimen ->
                 SpecimenListItem(
                     specimen = specimen,
                     onCardClick = { onSpecimenClick(specimen) },

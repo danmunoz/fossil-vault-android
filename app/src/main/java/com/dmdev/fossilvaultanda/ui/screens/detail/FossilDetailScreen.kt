@@ -2,7 +2,6 @@ package com.dmdev.fossilvaultanda.ui.screens.detail
 
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -82,12 +81,6 @@ fun FossilDetailScreen(
         }
     }
     
-    // Handle system back button
-    BackHandler {
-        // Save scroll position before navigating back
-        viewModel.saveScrollPosition(listState.firstVisibleItemIndex)
-        onNavigateBack()
-    }
     
     Scaffold(
         topBar = {

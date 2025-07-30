@@ -15,9 +15,8 @@ import com.dmdev.fossilvaultanda.data.repository.interfaces.ImageStoring
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,11 +48,12 @@ class FirestoreDataRepository @Inject constructor(
     private var specimenListener: ListenerRegistration? = null
     private var tagListener: ListenerRegistration? = null
     private var profileListener: ListenerRegistration? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
     
     init {
         setupAuthStateListener()
         // Force initial setup if user is already authenticated
-        GlobalScope.launch {
+        coroutineScope.launch {
             try {
                 val currentUserId = authManager.getCurrentUserId()
                 Log.d("FirestoreRepo", "Init - Current user ID: $currentUserId")
@@ -73,7 +73,7 @@ class FirestoreDataRepository @Inject constructor(
                 Log.d("FirestoreRepo", "Auth state changed: isAuthenticated=$isAuthenticated")
                 if (isAuthenticated) {
                     // Add a small delay to ensure auth is fully established
-                    GlobalScope.launch {
+                    coroutineScope.launch {
                         kotlinx.coroutines.delay(500) // Wait 500ms
                         try {
                             val userId = authManager.getCurrentUserId()
@@ -93,7 +93,7 @@ class FirestoreDataRepository @Inject constructor(
                     clearLocalData()
                 }
             }
-            .launchIn(GlobalScope)
+            .launchIn(coroutineScope)
     }
     
     private suspend fun getUserId(): String {
@@ -103,7 +103,7 @@ class FirestoreDataRepository @Inject constructor(
     
     
     private fun setupFirestoreListeners() {
-        GlobalScope.launch {
+        coroutineScope.launch {
             try {
                 val userId = getUserId()
                 Log.d("FirestoreRepo", "Setting up listeners for userId: $userId")
