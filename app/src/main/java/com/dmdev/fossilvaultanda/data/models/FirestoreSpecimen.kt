@@ -78,8 +78,17 @@ data class FirestoreSpecimen(
             imageUrls = imageUrls.mapNotNull { imageMap ->
                 val url = imageMap["url"] as? String
                 val path = imageMap["path"] as? String
+                val size = imageMap["size"] as? Number
+                val formatString = imageMap["format"] as? String
+                val format = formatString?.let { com.dmdev.fossilvaultanda.data.models.enums.ImageFormat.fromExtension(it) }
+
                 if (url != null && path != null) {
-                    StoredImage(url = url, path = path)
+                    StoredImage(
+                        url = url,
+                        path = path,
+                        size = size?.toInt(),
+                        format = format
+                    )
                 } else null
             },
             isFavorite = isFavorite,

@@ -132,7 +132,15 @@ data class Specimen(
             "creationDate" to com.google.firebase.Timestamp(creationDate.epochSeconds, creationDate.nanosecondsOfSecond),
             "inventoryId" to inventoryId,
             "notes" to notes,
-            "imageUrls" to imageUrls.map { mapOf("url" to it.url, "path" to it.path) },
+            "imageUrls" to imageUrls.map { image ->
+                val imageMap = mutableMapOf<String, Any>(
+                    "url" to image.url,
+                    "path" to image.path
+                )
+                image.size?.let { imageMap["size"] = it }
+                image.format?.let { imageMap["format"] = it.value }
+                imageMap
+            },
             "isFavorite" to isFavorite,
             "tagNames" to tagNames,
             "isPublic" to isPublic,
