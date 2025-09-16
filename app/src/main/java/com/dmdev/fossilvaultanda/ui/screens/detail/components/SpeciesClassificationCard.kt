@@ -32,7 +32,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.dmdev.fossilvaultanda.data.models.Specimen
+import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
 import com.dmdev.fossilvaultanda.ui.theme.getPeriodColor
+import com.fossilVault.geological.GeologicalTime
+import com.fossilVault.geological.GeologicalPeriod
+import com.fossilVault.geological.GeologicalEra
+import com.fossilVault.geological.GeologicalEpoch
+import com.fossilVault.geological.GeologicalAge
+import androidx.compose.ui.tooling.preview.Preview
+import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -101,36 +109,11 @@ fun SpeciesClassificationCard(
             }
             
             Spacer(modifier = Modifier.height(12.dp))
-            
-            // Geological period chip
-            FilterChip(
-                selected = false,
-                onClick = onPeriodClick,
-                label = { 
-                    Text(
-                        text = specimen.period.displayName,
-                        color = Color.White
-                    )
-                },
-                leadingIcon = {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .background(
-                                color = getPeriodColor(specimen.period),
-                                shape = CircleShape
-                            )
-                    )
-                },
-                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-                    containerColor = getPeriodColor(specimen.period),
-                    labelColor = Color.White,
-                    selectedContainerColor = getPeriodColor(specimen.period),
-                    selectedLabelColor = Color.White
-                ),
-                modifier = Modifier.semantics {
-                    contentDescription = "Geological period: ${specimen.period.displayName}"
-                }
+
+            // Geological time hierarchy
+            GeologicalTimeHierarchy(
+                geologicalTime = specimen.geologicalTime,
+                onPeriodClick = onPeriodClick
             )
             
             // Tags section (only show if tags exist)
@@ -171,6 +154,158 @@ fun SpeciesClassificationCard(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun GeologicalTimeHierarchy(
+    geologicalTime: GeologicalTime,
+    onPeriodClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        // Build the hierarchy display string
+        val hierarchyComponents = mutableListOf<String>()
+
+        geologicalTime.era?.let { era ->
+            hierarchyComponents.add(era.displayName)
+        }
+
+        geologicalTime.period?.let { period ->
+            hierarchyComponents.add(period.displayName)
+        }
+
+        geologicalTime.epoch?.let { epoch ->
+            hierarchyComponents.add(epoch.displayName)
+        }
+
+        geologicalTime.age?.let { age ->
+            hierarchyComponents.add(age.displayName)
+        }
+
+        if (hierarchyComponents.isNotEmpty()) {
+            // Main geological time chip with primary period color
+            FilterChip(
+                selected = false,
+                onClick = onPeriodClick,
+                label = {
+                    Text(
+                        text = hierarchyComponents.joinToString(" > "),
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                leadingIcon = {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                color = geologicalTime.period?.color ?: Color.Gray,
+                                shape = CircleShape
+                            )
+                    )
+                },
+                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                    containerColor = geologicalTime.period?.color ?: Color.Gray,
+                    labelColor = Color.White,
+                    selectedContainerColor = geologicalTime.period?.color ?: Color.Gray,
+                    selectedLabelColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = "Geological time: ${hierarchyComponents.joinToString(", ")}"
+                    }
+            )
+
+            // Show time range if available
+            geologicalTime.timeRange?.let { timeRange ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = timeRange,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Time range: $timeRange"
+                    }
+                )
+            }
+        } else {
+            // Fallback for unknown geological time
+            FilterChip(
+                selected = false,
+                onClick = onPeriodClick,
+                label = {
+                    Text(
+                        text = "Unknown",
+                        color = Color.White
+                    )
+                },
+                leadingIcon = {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                color = Color.Gray,
+                                shape = CircleShape
+                            )
+                    )
+                },
+                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                    containerColor = Color.Gray,
+                    labelColor = Color.White,
+                    selectedContainerColor = Color.Gray,
+                    selectedLabelColor = Color.White
+                ),
+                modifier = Modifier.semantics {
+                    contentDescription = "Geological time: Unknown"
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GeologicalTimeHierarchyPreview() {
+    FossilVaultTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text("Complete Geological Time:")
+            GeologicalTimeHierarchy(
+                geologicalTime = GeologicalTime(
+                    era = GeologicalEra.CENOZOIC,
+                    period = GeologicalPeriod.NEOGENE,
+                    epoch = GeologicalEpoch.MIOCENE,
+                    age = GeologicalAge.LANGHIAN
+                ),
+                onPeriodClick = { }
+            )
+
+            Text("Partial Geological Time (Era + Period only):")
+            GeologicalTimeHierarchy(
+                geologicalTime = GeologicalTime(
+                    era = GeologicalEra.MESOZOIC,
+                    period = GeologicalPeriod.CRETACEOUS,
+                    epoch = null,
+                    age = null
+                ),
+                onPeriodClick = { }
+            )
+
+            Text("Period only:")
+            GeologicalTimeHierarchy(
+                geologicalTime = GeologicalTime(
+                    era = null,
+                    period = GeologicalPeriod.JURASSIC,
+                    epoch = null,
+                    age = null
+                ),
+                onPeriodClick = { }
+            )
         }
     }
 }

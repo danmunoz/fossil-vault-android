@@ -4,6 +4,11 @@ import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.fossilVault.geological.GeologicalTime
+import com.fossilVault.geological.GeologicalPeriod
+import com.fossilVault.geological.GeologicalEra
+import com.fossilVault.geological.GeologicalEpoch
+import com.fossilVault.geological.GeologicalAge
 import com.google.firebase.Timestamp
 import kotlinx.datetime.Instant
 
@@ -11,7 +16,8 @@ data class FirestoreSpecimen(
     val id: String = "",
     val userId: String = "",
     val species: String = "",
-    val period: String = "",
+    val period: String = "", // Legacy field for backward compatibility
+    val geologicalTime: Map<String, String?>? = null, // New geological time structure
     val element: String = "",
     
     // Location Information
@@ -50,11 +56,14 @@ data class FirestoreSpecimen(
     val estimatedValueCurrency: String? = null
 ) {
     fun toSpecimen(): Specimen {
+        // Parse geological time with backward compatibility
+        val geologicalTimeObject = parseGeologicalTime()
+
         return Specimen(
             id = id,
             userId = userId,
             species = species,
-            period = Period.fromSerializedName(period),
+            geologicalTime = geologicalTimeObject,
             element = FossilElement.fromSerializedName(element),
             location = location,
             formation = formation,
@@ -99,5 +108,58 @@ data class FirestoreSpecimen(
             estimatedValue = estimatedValue,
             estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency)
         )
+    }
+
+    private fun parseGeologicalTime(): GeologicalTime {
+        // If new geologicalTime structure exists, use it
+        geologicalTime?.let { gtMap ->
+            val era = gtMap["era"]?.let { eraName ->
+                try {
+                    GeologicalEra.valueOf(eraName.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            val geologicalPeriod = gtMap["period"]?.let { periodName ->
+                try {
+                    GeologicalPeriod.valueOf(periodName.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            val epoch = gtMap["epoch"]?.let { epochName ->
+                try {
+                    GeologicalEpoch.valueOf(epochName.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            val age = gtMap["age"]?.let { ageName ->
+                try {
+                    GeologicalAge.valueOf(ageName.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            return GeologicalTime(
+                era = era,
+                period = geologicalPeriod,
+                epoch = epoch,
+                age = age
+            )
+        }
+
+        // Fallback to legacy period field
+        if (period.isNotEmpty()) {
+            val legacyPeriod = Period.fromSerializedName(period)
+            return PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(legacyPeriod)
+        }
+
+        // Return empty GeologicalTime if no data
+        return GeologicalTime()
     }
 }

@@ -162,7 +162,7 @@ fun SpecimenCard(
                     onClick = { },
                     label = {
                         Text(
-                            text = specimen.period.displayName,
+                            text = specimen.geologicalTime.period?.displayName ?: "Unknown",
                             style = MaterialTheme.typography.labelSmall
                         )
                     },
@@ -266,7 +266,7 @@ fun SpecimenListItem(
                         onClick = { },
                         label = {
                             Text(
-                                text = specimen.period.displayName,
+                                text = specimen.geologicalTime.period?.displayName ?: "Unknown",
                                 style = MaterialTheme.typography.labelSmall
                             )
                         },
@@ -319,7 +319,7 @@ fun SpecimenCardPreview() {
         id = "1",
         userId = "user1",
         species = "Tyrannosaurus rex",
-        period = Period.CRETACEOUS,
+        geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
         element = FossilElement.SKULL,
         location = "Hell Creek Formation, Montana",
         isFavorite = true,
@@ -336,7 +336,7 @@ fun SpecimenListItemPreview() {
         id = "1",
         userId = "user1",
         species = "Triceratops horridus",
-        period = Period.CRETACEOUS,
+        geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
         element = FossilElement.SKULL,
         location = "Hell Creek Formation",
         isFavorite = false,

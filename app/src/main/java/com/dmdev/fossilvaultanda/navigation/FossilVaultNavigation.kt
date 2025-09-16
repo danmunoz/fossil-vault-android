@@ -237,7 +237,7 @@ fun FossilVaultNavigation(
                     addSpecimenViewModel.updatePeriod(period)
                     navController.navigateUp()
                 },
-                selectedPeriod = addSpecimenViewModel.formState.collectAsState().value.period,
+                selectedPeriod = addSpecimenViewModel.getCurrentSelectedPeriod(),
                 modifier = Modifier.fillMaxSize()
             )
         }

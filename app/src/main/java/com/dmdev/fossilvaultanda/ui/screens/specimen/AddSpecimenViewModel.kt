@@ -8,6 +8,8 @@ import com.dmdev.fossilvaultanda.data.models.UserProfile
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
+import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
+import com.fossilVault.geological.GeologicalTime
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
 import com.dmdev.fossilvaultanda.data.repository.interfaces.DatabaseManaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,7 +87,8 @@ class AddSpecimenViewModel @Inject constructor(
     }
 
     fun updatePeriod(period: Period) {
-        _formState.value = _formState.value.copy(period = period)
+        val geologicalTime = PeriodToGeologicalTimeMapper.createGeologicalTimeFromPeriodSelection(period)
+        _formState.value = _formState.value.copy(geologicalTime = geologicalTime)
         clearValidationError("period")
     }
 
@@ -173,6 +176,10 @@ class AddSpecimenViewModel @Inject constructor(
 
     fun updateIsPublic(isPublic: Boolean) {
         _formState.value = _formState.value.copy(isPublic = isPublic)
+    }
+
+    fun getCurrentSelectedPeriod(): Period {
+        return PeriodToGeologicalTimeMapper.mapGeologicalPeriodToPeriod(_formState.value.geologicalTime.period)
     }
 
     fun saveSpecimen() {
@@ -278,7 +285,7 @@ class AddSpecimenViewModel @Inject constructor(
             id = specimenId,
             userId = userId,
             species = state.species,
-            period = state.period,
+            geologicalTime = state.geologicalTime,
             element = if (state.element == FossilElement.OTHER && state.customElement.isNotBlank()) {
                 FossilElement.OTHER // Note: In a real app, you might want to handle custom elements differently
             } else {
@@ -325,7 +332,7 @@ class AddSpecimenViewModel @Inject constructor(
 data class SpecimenFormState(
     // Basic Information (Required)
     val species: String = "",
-    val period: Period = Period.UNKNOWN,
+    val geologicalTime: GeologicalTime = GeologicalTime(),
     val element: FossilElement = FossilElement.OTHER,
     val customElement: String = "", // For "Other" element type
     
@@ -365,7 +372,7 @@ data class SpecimenFormState(
         fun fromSpecimen(specimen: Specimen): SpecimenFormState {
             return SpecimenFormState(
                 species = specimen.species,
-                period = specimen.period,
+                geologicalTime = specimen.geologicalTime,
                 element = specimen.element,
                 customElement = "", // Would need custom element handling
                 location = specimen.location ?: "",

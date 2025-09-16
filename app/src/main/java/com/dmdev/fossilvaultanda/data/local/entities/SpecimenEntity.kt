@@ -2,13 +2,33 @@ package com.dmdev.fossilvaultanda.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.dmdev.fossilvaultanda.data.models.Specimen
+import com.dmdev.fossilvaultanda.data.models.StoredImage
+import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
+import com.dmdev.fossilvaultanda.data.models.enums.Currency
+import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
+import com.dmdev.fossilvaultanda.data.models.enums.Period
+import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.fossilVault.geological.GeologicalTime
+import com.fossilVault.geological.GeologicalPeriod
+import com.fossilVault.geological.GeologicalEra
+import com.fossilVault.geological.GeologicalEpoch
+import com.fossilVault.geological.GeologicalAge
+import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 
 @Entity(tableName = "specimens")
 data class SpecimenEntity(
     @PrimaryKey val id: String,
     val userId: String,
     val species: String,
-    val period: String,
+    val period: String, // Legacy field for backward compatibility
+    val geologicalEra: String? = null,
+    val geologicalPeriod: String? = null,
+    val geologicalEpoch: String? = null,
+    val geologicalAge: String? = null,
     val element: String,
     
     // Location Information
@@ -49,4 +69,134 @@ data class SpecimenEntity(
     // Sync metadata
     val lastModified: Long = System.currentTimeMillis(),
     val needsSync: Boolean = false
-)
+) {
+    fun toSpecimen(): Specimen {
+        // Parse geological time with backward compatibility
+        val geologicalTimeObject = parseGeologicalTime()
+
+        return Specimen(
+            id = id,
+            userId = userId,
+            species = species,
+            geologicalTime = geologicalTimeObject,
+            element = FossilElement.fromSerializedName(element),
+            location = location,
+            formation = formation,
+            latitude = latitude,
+            longitude = longitude,
+            width = width,
+            height = height,
+            length = length,
+            unit = SizeUnit.fromSerializedName(unit),
+            collectionDate = collectionDate?.let { Instant.parse(it) },
+            acquisitionDate = acquisitionDate?.let { Instant.parse(it) },
+            creationDate = Instant.parse(creationDate),
+            inventoryId = inventoryId,
+            notes = notes,
+            imageUrls = try {
+                Json.decodeFromString<List<StoredImage>>(imageUrls)
+            } catch (e: Exception) {
+                emptyList()
+            },
+            isFavorite = isFavorite,
+            tagNames = try {
+                Json.decodeFromString<List<String>>(tagNames)
+            } catch (e: Exception) {
+                emptyList()
+            },
+            isPublic = isPublic,
+            pricePaid = pricePaid,
+            pricePaidCurrency = Currency.fromSerializedName(pricePaidCurrency),
+            estimatedValue = estimatedValue,
+            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency)
+        )
+    }
+
+    private fun parseGeologicalTime(): GeologicalTime {
+        // If new geological time fields exist, use them
+        if (geologicalPeriod != null) {
+            val era = geologicalEra?.let {
+                try {
+                    GeologicalEra.valueOf(it.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            val gPeriod = try {
+                GeologicalPeriod.valueOf(geologicalPeriod.uppercase())
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+
+            val epoch = geologicalEpoch?.let {
+                try {
+                    GeologicalEpoch.valueOf(it.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            val age = geologicalAge?.let {
+                try {
+                    GeologicalAge.valueOf(it.uppercase())
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+
+            return GeologicalTime(
+                era = era,
+                period = gPeriod,
+                epoch = epoch,
+                age = age
+            )
+        }
+
+        // Fallback to legacy period field
+        if (period.isNotEmpty()) {
+            val legacyPeriod = Period.fromSerializedName(period)
+            return PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(legacyPeriod)
+        }
+
+        // Return empty GeologicalTime if no data
+        return GeologicalTime()
+    }
+}
+
+fun Specimen.toSpecimenEntity(): SpecimenEntity {
+    return SpecimenEntity(
+        id = id,
+        userId = userId,
+        species = species,
+        period = "", // Legacy field left empty for new specimens
+        geologicalEra = geologicalTime.era?.name?.lowercase(),
+        geologicalPeriod = geologicalTime.period?.name?.lowercase(),
+        geologicalEpoch = geologicalTime.epoch?.name?.lowercase(),
+        geologicalAge = geologicalTime.age?.name?.lowercase(),
+        element = element.serializedName,
+        location = location,
+        formation = formation,
+        latitude = latitude,
+        longitude = longitude,
+        width = width,
+        height = height,
+        length = length,
+        unit = unit.serializedName,
+        collectionDate = collectionDate?.toString(),
+        acquisitionDate = acquisitionDate?.toString(),
+        creationDate = creationDate.toString(),
+        inventoryId = inventoryId,
+        notes = notes,
+        imageUrls = Json.encodeToString(imageUrls),
+        isFavorite = isFavorite,
+        tagNames = Json.encodeToString(tagNames),
+        isPublic = isPublic,
+        pricePaid = pricePaid,
+        pricePaidCurrency = pricePaidCurrency?.serializedName,
+        estimatedValue = estimatedValue,
+        estimatedValueCurrency = estimatedValueCurrency?.serializedName,
+        lastModified = System.currentTimeMillis(),
+        needsSync = true
+    )
+}

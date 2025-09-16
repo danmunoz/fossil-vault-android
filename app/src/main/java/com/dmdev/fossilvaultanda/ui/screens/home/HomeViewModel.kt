@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dmdev.fossilvaultanda.data.models.Specimen
 import com.dmdev.fossilvaultanda.data.models.enums.DisplayMode
 import com.dmdev.fossilvaultanda.data.models.enums.Period
+import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
 import com.dmdev.fossilvaultanda.data.models.enums.SortOption
 import com.dmdev.fossilvaultanda.data.repository.interfaces.DatabaseManaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -65,7 +66,10 @@ class HomeViewModel @Inject constructor(
         
         // Apply period filter
         if (period != null) {
-            filtered = filtered.filter { it.period == period }
+            filtered = filtered.filter { specimen ->
+                val specimenPeriod = PeriodToGeologicalTimeMapper.mapGeologicalPeriodToPeriod(specimen.geologicalTime.period)
+                specimenPeriod == period
+            }
         }
         
         // Apply sorting

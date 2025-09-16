@@ -166,7 +166,7 @@ fun AddSpecimenScreen(
             // Basic Information Section
             BasicInformationSection(
                 species = formState.species,
-                period = formState.period,
+                period = viewModel.getCurrentSelectedPeriod(),
                 element = formState.element,
                 customElement = formState.customElement,
                 onSpeciesChange = viewModel::updateSpecies,

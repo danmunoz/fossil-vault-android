@@ -2,8 +2,9 @@ package com.dmdev.fossilvaultanda.data.models
 
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
-import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.fossilVault.geological.GeologicalTime
+import kotlinx.serialization.Contextual
 import com.google.firebase.Timestamp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -14,7 +15,7 @@ data class Specimen(
     val id: String = "",
     val userId: String = "",
     val species: String = "",
-    val period: Period = Period.UNKNOWN,
+    @Contextual val geologicalTime: GeologicalTime = GeologicalTime(),
     val element: FossilElement = FossilElement.OTHER,
     
     // Location Information
@@ -78,7 +79,7 @@ data class Specimen(
     fun toCsvRow(): String {
         return csvEscape(
             listOf(
-                id, species, period.displayName, element.displayString,
+                id, species, geologicalTime.period?.displayName ?: "Unknown", element.displayString,
                 location ?: "", formation ?: "",
                 latitude?.toString() ?: "", longitude?.toString() ?: "",
                 width?.toString() ?: "", height?.toString() ?: "", 
@@ -113,7 +114,12 @@ data class Specimen(
             "id" to id,
             "userId" to userId,
             "species" to species,
-            "period" to period.serializedName,
+            "geologicalTime" to mapOf(
+                "era" to geologicalTime.era?.name?.lowercase(),
+                "period" to geologicalTime.period?.name?.lowercase(),
+                "epoch" to geologicalTime.epoch?.name?.lowercase(),
+                "age" to geologicalTime.age?.name?.lowercase()
+            ),
             "element" to element.serializedName,
             "location" to location,
             "formation" to formation,
