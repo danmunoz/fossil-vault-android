@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dmdev.fossilvaultanda.data.models.Specimen
 import com.dmdev.fossilvaultanda.data.models.StoredImage
+import com.dmdev.fossilvaultanda.data.models.Taxonomy
 import com.dmdev.fossilvaultanda.data.models.UserProfile
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
@@ -289,7 +290,7 @@ class AddSpecimenViewModel @Inject constructor(
         return Specimen(
             id = specimenId,
             userId = userId,
-            species = state.species,
+            taxonomy = Taxonomy.fromSpeciesString(state.species),
             geologicalTime = state.geologicalTime,
             element = if (state.element == FossilElement.OTHER && state.customElement.isNotBlank()) {
                 FossilElement.OTHER // Note: In a real app, you might want to handle custom elements differently
@@ -376,7 +377,7 @@ data class SpecimenFormState(
     companion object {
         fun fromSpecimen(specimen: Specimen): SpecimenFormState {
             return SpecimenFormState(
-                species = specimen.species,
+                species = specimen.taxonomy.getDisplayName(),
                 geologicalTime = specimen.geologicalTime,
                 element = specimen.element,
                 customElement = "", // Would need custom element handling

@@ -15,7 +15,8 @@ import kotlinx.datetime.Instant
 data class FirestoreSpecimen(
     val id: String = "",
     val userId: String = "",
-    val species: String = "",
+    val species: String = "", // Legacy field for backward compatibility
+    val taxonomy: Map<String, String?>? = null, // New taxonomy structure
     val period: String = "", // Legacy field for backward compatibility
     val geologicalTime: Map<String, String?>? = null, // New geological time structure
     val element: String = "",
@@ -59,10 +60,13 @@ data class FirestoreSpecimen(
         // Parse geological time with backward compatibility
         val geologicalTimeObject = parseGeologicalTime()
 
+        // Parse taxonomy with backward compatibility
+        val taxonomyObject = parseTaxonomy()
+
         return Specimen(
             id = id,
             userId = userId,
-            species = species,
+            taxonomy = taxonomyObject,
             geologicalTime = geologicalTimeObject,
             element = FossilElement.fromSerializedName(element),
             location = location,
@@ -161,5 +165,20 @@ data class FirestoreSpecimen(
 
         // Return empty GeologicalTime if no data
         return GeologicalTime()
+    }
+
+    private fun parseTaxonomy(): Taxonomy {
+        // If new taxonomy structure exists, use it
+        taxonomy?.let { taxonomyMap ->
+            return Taxonomy.fromFirestoreMap(taxonomyMap)
+        }
+
+        // Fallback to legacy species field for backward compatibility
+        if (species.isNotEmpty()) {
+            return Taxonomy.fromSpeciesString(species)
+        }
+
+        // Return empty Taxonomy if no data
+        return Taxonomy()
     }
 }

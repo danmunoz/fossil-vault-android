@@ -23,7 +23,16 @@ import kotlinx.serialization.decodeFromString
 data class SpecimenEntity(
     @PrimaryKey val id: String,
     val userId: String,
-    val species: String,
+    val species: String, // Legacy field for backward compatibility
+    // Taxonomy fields
+    val taxonomyKingdom: String? = null,
+    val taxonomyPhylum: String? = null,
+    val taxonomyClass: String? = null,
+    val taxonomyOrder: String? = null,
+    val taxonomyFamily: String? = null,
+    val taxonomyGenus: String? = null,
+    val taxonomySpecies: String? = null,
+    val taxonomySubspecies: String? = null,
     val period: String, // Legacy field for backward compatibility
     val geologicalEra: String? = null,
     val geologicalPeriod: String? = null,
@@ -74,10 +83,13 @@ data class SpecimenEntity(
         // Parse geological time with backward compatibility
         val geologicalTimeObject = parseGeologicalTime()
 
+        // Parse taxonomy with backward compatibility
+        val taxonomyObject = parseTaxonomy()
+
         return Specimen(
             id = id,
             userId = userId,
-            species = species,
+            taxonomy = taxonomyObject,
             geologicalTime = geologicalTimeObject,
             element = FossilElement.fromSerializedName(element),
             location = location,
@@ -162,13 +174,45 @@ data class SpecimenEntity(
         // Return empty GeologicalTime if no data
         return GeologicalTime()
     }
+
+    private fun parseTaxonomy(): com.dmdev.fossilvaultanda.data.models.Taxonomy {
+        // If new taxonomy fields exist, use them
+        if (taxonomySpecies != null) {
+            return com.dmdev.fossilvaultanda.data.models.Taxonomy(
+                kingdom = taxonomyKingdom,
+                phylum = taxonomyPhylum,
+                taxonomicClass = taxonomyClass,
+                order = taxonomyOrder,
+                family = taxonomyFamily,
+                genus = taxonomyGenus,
+                species = taxonomySpecies,
+                subspecies = taxonomySubspecies
+            )
+        }
+
+        // Fallback to legacy species field for backward compatibility
+        if (species.isNotEmpty()) {
+            return com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString(species)
+        }
+
+        // Return empty Taxonomy if no data
+        return com.dmdev.fossilvaultanda.data.models.Taxonomy()
+    }
 }
 
 fun Specimen.toSpecimenEntity(): SpecimenEntity {
     return SpecimenEntity(
         id = id,
         userId = userId,
-        species = species,
+        species = "", // Legacy field left empty for new specimens
+        taxonomyKingdom = taxonomy.kingdom,
+        taxonomyPhylum = taxonomy.phylum,
+        taxonomyClass = taxonomy.taxonomicClass,
+        taxonomyOrder = taxonomy.order,
+        taxonomyFamily = taxonomy.family,
+        taxonomyGenus = taxonomy.genus,
+        taxonomySpecies = taxonomy.species,
+        taxonomySubspecies = taxonomy.subspecies,
         period = "", // Legacy field left empty for new specimens
         geologicalEra = geologicalTime.era?.name?.lowercase(),
         geologicalPeriod = geologicalTime.period?.name?.lowercase(),

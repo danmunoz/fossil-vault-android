@@ -55,7 +55,7 @@ fun SpeciesClassificationCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .semantics {
-                contentDescription = "Species and classification information for ${specimen.species}"
+                contentDescription = "Species and classification information for ${specimen.taxonomy.getDisplayName()}"
             },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -76,11 +76,11 @@ fun SpeciesClassificationCard(
                 ) {
                     // Species name (hero content)
                     Text(
-                        text = specimen.species,
+                        text = specimen.taxonomy.getDisplayName(),
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.semantics {
-                            contentDescription = "Species: ${specimen.species}"
+                            contentDescription = "Species: ${specimen.taxonomy.getDisplayName()}"
                         }
                     )
                     

@@ -69,7 +69,7 @@ fun SpecimenCard(
                 if (specimen.imageUrls.isNotEmpty()) {
                     AsyncImage(
                         model = specimen.imageUrls.first().url,
-                        contentDescription = "Specimen photo of ${specimen.species}",
+                        contentDescription = "Specimen photo of ${specimen.taxonomy.getDisplayName()}",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -124,7 +124,7 @@ fun SpecimenCard(
             ) {
                 // Species name
                 Text(
-                    text = specimen.species,
+                    text = specimen.taxonomy.getDisplayName(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2,
@@ -206,7 +206,7 @@ fun SpecimenListItem(
                 if (specimen.imageUrls.isNotEmpty()) {
                     AsyncImage(
                         model = specimen.imageUrls.first().url,
-                        contentDescription = "Specimen photo of ${specimen.species}",
+                        contentDescription = "Specimen photo of ${specimen.taxonomy.getDisplayName()}",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
@@ -237,7 +237,7 @@ fun SpecimenListItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = specimen.species,
+                        text = specimen.taxonomy.getDisplayName(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
@@ -318,7 +318,7 @@ fun SpecimenCardPreview() {
     val sampleSpecimen = Specimen(
         id = "1",
         userId = "user1",
-        species = "Tyrannosaurus rex",
+        taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Tyrannosaurus rex"),
         geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
         element = FossilElement.SKULL,
         location = "Hell Creek Formation, Montana",
@@ -335,7 +335,7 @@ fun SpecimenListItemPreview() {
     val sampleSpecimen = Specimen(
         id = "1",
         userId = "user1",
-        species = "Triceratops horridus",
+        taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Triceratops horridus"),
         geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
         element = FossilElement.SKULL,
         location = "Hell Creek Formation",

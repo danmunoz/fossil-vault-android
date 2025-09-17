@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
             if (query.isNotBlank()) {
                 filtered = filtered.filter { specimen ->
                     try {
-                        specimen.species.contains(query, ignoreCase = true) ||
+                        specimen.taxonomy.getDisplayName().contains(query, ignoreCase = true) ||
                         specimen.location?.contains(query, ignoreCase = true) == true ||
                         specimen.formation?.contains(query, ignoreCase = true) == true
                     } catch (e: Exception) {
@@ -87,8 +87,8 @@ class HomeViewModel @Inject constructor(
             when (sort) {
                 SortOption.RECENT -> filtered.sortedByDescending { it.creationDate }
                 SortOption.OLDEST -> filtered.sortedBy { it.creationDate }
-                SortOption.NAME_A_Z -> filtered.sortedBy { it.species.lowercase() }
-                SortOption.NAME_Z_A -> filtered.sortedByDescending { it.species.lowercase() }
+                SortOption.NAME_A_Z -> filtered.sortedBy { it.taxonomy.getDisplayName().lowercase() }
+                SortOption.NAME_Z_A -> filtered.sortedByDescending { it.taxonomy.getDisplayName().lowercase() }
             }
         } catch (e: Exception) {
             Log.e("HomeViewModel", "Error in filteredSpecimens combine: ${e.message}")

@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 data class Specimen(
     val id: String = "",
     val userId: String = "",
-    val species: String = "",
+    val taxonomy: Taxonomy = Taxonomy(),
     @Contextual val geologicalTime: GeologicalTime = GeologicalTime(),
     val element: FossilElement = FossilElement.OTHER,
     
@@ -57,32 +57,37 @@ data class Specimen(
         return when {
             id.isBlank() -> Result.failure(DataException.ValidationException("ID cannot be blank"))
             userId.isBlank() -> Result.failure(DataException.ValidationException("User ID cannot be blank"))
-            species.isBlank() -> Result.failure(DataException.ValidationException("Species cannot be blank"))
-            latitude != null && (latitude < -90 || latitude > 90) -> 
+            taxonomy.species.isBlank() -> Result.failure(DataException.ValidationException("Species cannot be blank"))
+            latitude != null && (latitude < -90 || latitude > 90) ->
                 Result.failure(DataException.ValidationException("Invalid latitude"))
-            longitude != null && (longitude < -180 || longitude > 180) -> 
+            longitude != null && (longitude < -180 || longitude > 180) ->
                 Result.failure(DataException.ValidationException("Invalid longitude"))
-            width != null && width < 0 -> 
+            width != null && width < 0 ->
                 Result.failure(DataException.ValidationException("Width cannot be negative"))
-            height != null && height < 0 -> 
+            height != null && height < 0 ->
                 Result.failure(DataException.ValidationException("Height cannot be negative"))
-            length != null && length < 0 -> 
+            length != null && length < 0 ->
                 Result.failure(DataException.ValidationException("Length cannot be negative"))
-            pricePaid != null && pricePaid < 0 -> 
+            pricePaid != null && pricePaid < 0 ->
                 Result.failure(DataException.ValidationException("Price paid cannot be negative"))
-            estimatedValue != null && estimatedValue < 0 -> 
+            estimatedValue != null && estimatedValue < 0 ->
                 Result.failure(DataException.ValidationException("Estimated value cannot be negative"))
-            else -> Result.success(Unit)
+            else -> {
+                taxonomy.validate().fold(
+                    onSuccess = { Result.success(Unit) },
+                    onFailure = { Result.failure(DataException.ValidationException(it.message ?: "Invalid taxonomy")) }
+                )
+            }
         }
     }
     
     fun toCsvRow(): String {
         return csvEscape(
             listOf(
-                id, species, geologicalTime.period?.displayName ?: "Unknown", element.displayString,
+                id, taxonomy.getDisplayName(), geologicalTime.period?.displayName ?: "Unknown", element.displayString,
                 location ?: "", formation ?: "",
                 latitude?.toString() ?: "", longitude?.toString() ?: "",
-                width?.toString() ?: "", height?.toString() ?: "", 
+                width?.toString() ?: "", height?.toString() ?: "",
                 length?.toString() ?: "", unit.name,
                 collectionDate?.toString() ?: "",
                 acquisitionDate?.toString() ?: "",
@@ -113,7 +118,7 @@ data class Specimen(
         return mapOf(
             "id" to id,
             "userId" to userId,
-            "species" to species,
+            "taxonomy" to taxonomy.toFirestoreMap(),
             "geologicalTime" to mapOf(
                 "era" to geologicalTime.era?.name?.lowercase(),
                 "period" to geologicalTime.period?.name?.lowercase(),
@@ -129,11 +134,11 @@ data class Specimen(
             "height" to height,
             "length" to length,
             "unit" to unit.serializedName,
-            "collectionDate" to collectionDate?.let { 
-                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond) 
+            "collectionDate" to collectionDate?.let {
+                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond)
             },
-            "acquisitionDate" to acquisitionDate?.let { 
-                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond) 
+            "acquisitionDate" to acquisitionDate?.let {
+                com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond)
             },
             "creationDate" to com.google.firebase.Timestamp(creationDate.epochSeconds, creationDate.nanosecondsOfSecond),
             "inventoryId" to inventoryId,

@@ -157,7 +157,7 @@ fun SpecimenGridPreview() {
         Specimen(
             id = "1",
             userId = "user1",
-            species = "Tyrannosaurus rex",
+            taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Tyrannosaurus rex"),
             geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
             element = FossilElement.SKULL,
             location = "Hell Creek Formation, Montana",
@@ -167,7 +167,7 @@ fun SpecimenGridPreview() {
         Specimen(
             id = "2",
             userId = "user1",
-            species = "Triceratops horridus",
+            taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Triceratops horridus"),
             geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
             element = FossilElement.SKULL,
             location = "Hell Creek Formation",
@@ -186,7 +186,7 @@ fun SpecimenListPreview() {
         Specimen(
             id = "1",
             userId = "user1",
-            species = "Tyrannosaurus rex",
+            taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Tyrannosaurus rex"),
             geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
             element = FossilElement.SKULL,
             location = "Hell Creek Formation, Montana",
@@ -196,7 +196,7 @@ fun SpecimenListPreview() {
         Specimen(
             id = "2",
             userId = "user1",
-            species = "Triceratops horridus",
+            taxonomy = com.dmdev.fossilvaultanda.data.models.Taxonomy.fromSpeciesString("Triceratops horridus"),
             geologicalTime = com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper.mapPeriodToGeologicalTime(com.dmdev.fossilvaultanda.data.models.enums.Period.CRETACEOUS),
             element = FossilElement.SKULL,
             location = "Hell Creek Formation",
