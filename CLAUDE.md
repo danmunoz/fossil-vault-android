@@ -6,6 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 FossilVault is a comprehensive fossil collection management app for Android, built with Kotlin and Jetpack Compose. This is the Android version of a production iOS app that helps fossil collectors catalog, organize, and manage their fossil collections.
 
+**Official Website**: https://fossilvault.app
+**Privacy Policy**: https://fossilvault.app/privacy/
+**Target Market**: Paleontology enthusiasts and fossil collectors worldwide
+**Development Base**: Berlin, Germany
+
 The iOS version features:
 - Complete specimen cataloging with 25+ fields (species, geological period, location, dimensions, value)
 - Photo management with multiple images per specimen
@@ -14,7 +19,7 @@ The iOS version features:
 - Search and filtering by geological periods
 - Export functionality (CSV, ZIP)
 - Statistics and analytics dashboard
-- Freemium business model with Pro tier subscriptions
+- Currently free with potential future monetization strategies
 
 ## Technology Stack
 
@@ -202,4 +207,11 @@ The Android app should maintain feature parity with the iOS version while follow
 - ✅ **Authentication**: Email/password auth with user profile management
 - ✅ **Storage**: Cloud storage configured for specimen images
 - ✅ **Configuration**: google-services.json integrated with build system
+- ✅ **Privacy Policy**: https://fossilvault.app/privacy/ integrated in AndroidManifest.xml
 - ⏳ **Functions**: Server-side logic for data processing and exports (future)
+
+## App Store & Distribution
+- **Privacy Policy**: Hosted at https://fossilvault.app/privacy/ for Google Play compliance
+- **Camera Permissions**: Privacy policy covers camera usage for specimen photography
+- **Location Permissions**: GPS tracking for fossil discovery sites covered in privacy policy
+- **Target Platforms**: iOS (production), Android (beta development)
