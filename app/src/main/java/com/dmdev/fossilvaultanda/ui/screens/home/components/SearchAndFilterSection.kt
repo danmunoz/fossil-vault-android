@@ -13,12 +13,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dmdev.fossilvaultanda.data.models.enums.Period
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAndFilterSection(
     searchQuery: String,
@@ -41,15 +39,10 @@ fun SearchAndFilterSection(
     resultCount: Int,
     modifier: Modifier = Modifier
 ) {
-    var active by remember { mutableStateOf(false) }
-    
     Column(modifier = modifier.padding(16.dp)) {
-        SearchBar(
-            query = searchQuery,
-            onQueryChange = onSearchQueryChange,
-            onSearch = { active = false },
-            active = active,
-            onActiveChange = { active = it },
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
             placeholder = {
                 Text("Search your collection")
             },
@@ -69,10 +62,9 @@ fun SearchAndFilterSection(
                     }
                 }
             } else null,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Search suggestions could go here in the future
-        }
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
         
         Spacer(modifier = Modifier.height(16.dp))
         

@@ -53,31 +53,46 @@ class HomeViewModel @Inject constructor(
     val filteredSpecimens: StateFlow<List<Specimen>> = combine(
         _specimens, searchQuery, selectedPeriod, sortOption
     ) { specimens, query, period, sort ->
-        var filtered = specimens
-        
-        // Apply search filter
-        if (query.isNotBlank()) {
-            filtered = filtered.filter { specimen ->
-                specimen.species.contains(query, ignoreCase = true) ||
-                specimen.location?.contains(query, ignoreCase = true) == true ||
-                specimen.formation?.contains(query, ignoreCase = true) == true
+        try {
+            var filtered = specimens
+
+            // Apply search filter
+            if (query.isNotBlank()) {
+                filtered = filtered.filter { specimen ->
+                    try {
+                        specimen.species.contains(query, ignoreCase = true) ||
+                        specimen.location?.contains(query, ignoreCase = true) == true ||
+                        specimen.formation?.contains(query, ignoreCase = true) == true
+                    } catch (e: Exception) {
+                        Log.e("HomeViewModel", "Error filtering specimen ${specimen.id}: ${e.message}")
+                        false
+                    }
+                }
             }
-        }
-        
-        // Apply period filter
-        if (period != null) {
-            filtered = filtered.filter { specimen ->
-                val specimenPeriod = PeriodToGeologicalTimeMapper.mapGeologicalPeriodToPeriod(specimen.geologicalTime.period)
-                specimenPeriod == period
+
+            // Apply period filter
+            if (period != null) {
+                filtered = filtered.filter { specimen ->
+                    try {
+                        val specimenPeriod = PeriodToGeologicalTimeMapper.mapGeologicalPeriodToPeriod(specimen.geologicalTime.period)
+                        specimenPeriod == period
+                    } catch (e: Exception) {
+                        Log.e("HomeViewModel", "Error filtering by period for specimen ${specimen.id}: ${e.message}")
+                        false
+                    }
+                }
             }
-        }
-        
-        // Apply sorting
-        when (sort) {
-            SortOption.RECENT -> filtered.sortedByDescending { it.creationDate }
-            SortOption.OLDEST -> filtered.sortedBy { it.creationDate }
-            SortOption.NAME_A_Z -> filtered.sortedBy { it.species.lowercase() }
-            SortOption.NAME_Z_A -> filtered.sortedByDescending { it.species.lowercase() }
+
+            // Apply sorting
+            when (sort) {
+                SortOption.RECENT -> filtered.sortedByDescending { it.creationDate }
+                SortOption.OLDEST -> filtered.sortedBy { it.creationDate }
+                SortOption.NAME_A_Z -> filtered.sortedBy { it.species.lowercase() }
+                SortOption.NAME_Z_A -> filtered.sortedByDescending { it.species.lowercase() }
+            }
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "Error in filteredSpecimens combine: ${e.message}")
+            emptyList()
         }
     }.stateIn(
         scope = viewModelScope,
@@ -87,7 +102,11 @@ class HomeViewModel @Inject constructor(
 
     // Actions
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+        try {
+            _searchQuery.value = query.trim()
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "Error updating search query: ${e.message}")
+        }
     }
     
     fun updateSelectedPeriod(period: Period?) {
