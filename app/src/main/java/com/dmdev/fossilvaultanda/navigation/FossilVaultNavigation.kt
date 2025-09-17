@@ -31,6 +31,8 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.LocationPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleCurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.support.AboutScreen
+import com.dmdev.fossilvaultanda.ui.screens.support.FAQScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
 import kotlinx.coroutines.launch
 
@@ -138,6 +140,12 @@ fun FossilVaultNavigation(
                 onNavigateToCurrencyPicker = {
                     navController.navigate(FossilVaultRoute.CurrencyPicker)
                 },
+                onNavigateToFAQ = {
+                    navController.navigate(FossilVaultRoute.FAQ)
+                },
+                onNavigateToAbout = {
+                    navController.navigate(FossilVaultRoute.About)
+                },
                 authenticationManager = authenticationManager,
                 modifier = Modifier.fillMaxSize()
             )
@@ -187,7 +195,26 @@ fun FossilVaultNavigation(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
+        // Support & Info Flow
+        composable<FossilVaultRoute.FAQ> {
+            FAQScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<FossilVaultRoute.About> {
+            AboutScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         // Add Specimen Flow
         composable<FossilVaultRoute.AddSpecimen> { backStackEntry ->
             val route = backStackEntry.toRoute<FossilVaultRoute.AddSpecimen>()

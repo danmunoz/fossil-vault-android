@@ -27,6 +27,7 @@ import com.dmdev.fossilvaultanda.authentication.domain.AuthenticationManager
 import com.dmdev.fossilvaultanda.data.models.AppSettings
 import com.dmdev.fossilvaultanda.ui.screens.settings.components.ConfigurationSection
 import com.dmdev.fossilvaultanda.ui.screens.settings.components.ProfileSection
+import com.dmdev.fossilvaultanda.ui.screens.settings.components.SupportInfoSection
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultSpacing
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 
@@ -38,6 +39,8 @@ fun SettingsScreen(
     onNavigateToAuth: () -> Unit = {},
     onNavigateToSizeUnitPicker: () -> Unit = {},
     onNavigateToCurrencyPicker: () -> Unit = {},
+    onNavigateToFAQ: () -> Unit = {},
+    onNavigateToAbout: () -> Unit = {},
     authenticationManager: AuthenticationManager? = null,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel()
@@ -98,9 +101,12 @@ fun SettingsScreen(
                 onNavigateToSizeUnitPicker = onNavigateToSizeUnitPicker,
                 onNavigateToCurrencyPicker = onNavigateToCurrencyPicker
             )
-            
-            // TODO: Add other sections (Data Management, Support & Info)
-            // These will be implemented in future tasks
+
+            // Support & Info Section
+            SupportInfoSection(
+                onNavigateToFAQ = onNavigateToFAQ,
+                onNavigateToAbout = onNavigateToAbout
+            )
         }
     }
 }

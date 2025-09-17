@@ -1,5 +1,7 @@
 package com.dmdev.fossilvaultanda.data.models
 
+import com.dmdev.fossilvaultanda.data.models.enums.AcquisitionMethod
+import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
@@ -50,6 +52,10 @@ data class FirestoreSpecimen(
     val tagNames: List<String> = emptyList(),
     val isPublic: Boolean = false,
     
+    // Acquisition Information
+    val acquisitionMethod: String? = null,
+    val condition: String? = null,
+
     // Valuation
     val pricePaid: Double? = null,
     val pricePaidCurrency: String? = null,
@@ -83,9 +89,11 @@ data class FirestoreSpecimen(
             acquisitionDate = acquisitionDate?.let { 
                 Instant.fromEpochSeconds(it.seconds, it.nanoseconds) 
             },
-            creationDate = creationDate?.let { 
-                Instant.fromEpochSeconds(it.seconds, it.nanoseconds) 
+            creationDate = creationDate?.let {
+                Instant.fromEpochSeconds(it.seconds, it.nanoseconds)
             } ?: kotlinx.datetime.Clock.System.now(),
+            acquisitionMethod = acquisitionMethod?.let { AcquisitionMethod.fromSerializedName(it) },
+            condition = condition?.let { Condition.fromSerializedName(it) },
             inventoryId = inventoryId,
             notes = notes,
             imageUrls = imageUrls.mapNotNull { imageMap ->

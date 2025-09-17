@@ -52,11 +52,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dmdev.fossilvaultanda.data.models.enums.AcquisitionMethod
+import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
 import com.fossilVault.geological.GeologicalTime
+import com.dmdev.fossilvaultanda.ui.screens.specimen.components.AcquisitionMethodPicker
+import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ConditionPicker
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DatePickerField
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DimensionInputRow
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.GeologicalTimeSelectionField
@@ -192,11 +196,15 @@ fun AddSpecimenScreen(
                 longitude = formState.longitude,
                 collectionDate = formState.collectionDate,
                 acquisitionDate = formState.acquisitionDate,
+                acquisitionMethod = formState.acquisitionMethod,
+                condition = formState.condition,
                 onLocationChange = viewModel::updateLocation,
                 onFormationChange = viewModel::updateFormation,
                 onLocationPickerClick = onNavigateToLocationPicker,
                 onCollectionDateChange = viewModel::updateCollectionDate,
                 onAcquisitionDateChange = viewModel::updateAcquisitionDate,
+                onAcquisitionMethodChange = viewModel::updateAcquisitionMethod,
+                onConditionChange = viewModel::updateCondition,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -379,11 +387,15 @@ private fun LocationSection(
     longitude: Double?,
     collectionDate: kotlinx.datetime.Instant?,
     acquisitionDate: kotlinx.datetime.Instant?,
+    acquisitionMethod: AcquisitionMethod?,
+    condition: Condition?,
     onLocationChange: (String) -> Unit,
     onFormationChange: (String) -> Unit,
     onLocationPickerClick: () -> Unit,
     onCollectionDateChange: (kotlinx.datetime.Instant?) -> Unit,
     onAcquisitionDateChange: (kotlinx.datetime.Instant?) -> Unit,
+    onAcquisitionMethodChange: (AcquisitionMethod?) -> Unit,
+    onConditionChange: (Condition?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -454,6 +466,26 @@ private fun LocationSection(
                 onDateSelected = onAcquisitionDateChange,
                 label = "Acquisition Date",
                 placeholder = "When was it acquired?",
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        // Acquisition Method and Condition pickers
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AcquisitionMethodPicker(
+                selectedMethod = acquisitionMethod,
+                onMethodChange = onAcquisitionMethodChange,
+                modifier = Modifier.weight(1f)
+            )
+
+            ConditionPicker(
+                selectedCondition = condition,
+                onConditionChange = onConditionChange,
                 modifier = Modifier.weight(1f)
             )
         }

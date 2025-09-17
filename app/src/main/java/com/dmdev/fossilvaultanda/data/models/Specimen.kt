@@ -1,5 +1,7 @@
 package com.dmdev.fossilvaultanda.data.models
 
+import com.dmdev.fossilvaultanda.data.models.enums.AcquisitionMethod
+import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
@@ -35,6 +37,10 @@ data class Specimen(
     val acquisitionDate: Instant? = null,
     val creationDate: Instant = Clock.System.now(),
     
+    // Acquisition Information
+    val acquisitionMethod: AcquisitionMethod? = null,
+    val condition: Condition? = null,
+
     // Additional Metadata
     val inventoryId: String? = null,
     val notes: String? = null,
@@ -91,6 +97,8 @@ data class Specimen(
                 length?.toString() ?: "", unit.name,
                 collectionDate?.toString() ?: "",
                 acquisitionDate?.toString() ?: "",
+                acquisitionMethod?.displayString ?: "",
+                condition?.displayString ?: "",
                 inventoryId ?: "", notes ?: "",
                 creationDate.toString(),
                 pricePaid?.toString() ?: "",
@@ -141,6 +149,8 @@ data class Specimen(
                 com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond)
             },
             "creationDate" to com.google.firebase.Timestamp(creationDate.epochSeconds, creationDate.nanosecondsOfSecond),
+            "acquisitionMethod" to acquisitionMethod?.serializedName,
+            "condition" to condition?.serializedName,
             "inventoryId" to inventoryId,
             "notes" to notes,
             "imageUrls" to imageUrls.map { image ->
@@ -165,7 +175,7 @@ data class Specimen(
     companion object {
         const val CSV_HEADER = "Identifier,Species,Period,Element,Location,Formation," +
                 "Latitude,Longitude,Width,Height,Length,Unit,Collection Date," +
-                "Acquisition Date,Inventory ID,Notes,Creation Date,Price Paid," +
+                "Acquisition Date,Acquisition Method,Condition,Inventory ID,Notes,Creation Date,Price Paid," +
                 "Price Paid Currency,Estimated Value,Estimated Value Currency"
     }
 }

@@ -1,0 +1,152 @@
+{
+  "en": [
+    {
+      "question": "Can I use the app without creating an account?",
+      "answer": "Yes! You can use FossilVault without signing up. Your data is stored locally on your device. However, without an account, you won't be able to sync your collection across devices or back it up to the cloud."
+    },
+    {
+      "question": "What happens if I delete the app without backing up?",
+      "answer": "If you're using a local account and delete the app, all your fossil data will be permanently lost. We recommend creating an account to safely back up and sync your collection."
+    },
+    {
+      "question": "How do I back up my fossil collection?",
+      "answer": "You can back up your collection in multiple ways: Export your collection as CSV or ZIP files (available with Pro and Max), or securely sync your collection online by creating an account and upgrading to Pro or Max for automatic backup across devices."
+    },
+    {
+      "question": "What's included in the free version?",
+      "answer": "The free tier lets you:\n- Add up to 15 specimens\n- Attach up to 5 photos per specimen\n- 200MB of storage space\n- Cloud backup and sync\n- Multi-platform availability (iOS, Android, Web)\n- Up to 5 tags\n- Import from CSV\n- Export functionality\n- Full display shelf access\n- Make 1 specimen public\n\nNote: Unlimited specimens, Statistics, ad-free experience, and unlimited public specimens are available in Pro and Max plans."
+    },
+    {
+      "question": "What's included in the Pro version?",
+      "answer": "With Pro, you get:\n- Unlimited specimens\n- Up to 10 photos per specimen\n- 5GB of storage space\n- Cloud backup and sync\n- Multi-platform availability (iOS, Android, Web)\n- Unlimited tags\n- Import and export functionality\n- Full display shelf access\n- Collection statistics and insights\n- Unlimited public specimens\n- AI-generated share captions and sale listings\n- Priority support\n- Enjoy a clean, ad-free experience"
+    },
+    {
+      "question": "What's included in the Max version?",
+      "answer": "With Max, you get everything in Pro plus:\n- Unlimited specimens\n- Up to 20 photos per specimen\n- 15GB of storage space\n- Advanced collection features\n- Priority support"
+    },
+    {
+      "question": "How much do Pro and Max cost?",
+      "answer": "You can upgrade at any time. We offer monthly and yearly subscriptions for both Pro and Max tiers.\nPricing information is available in the app.",
+    },
+    {
+      "question": "Can I export my collection?",
+      "answer": "Yes, but only with Pro or Max plans. You can export your collection as a CSV file or as a ZIP bundle containing both the data and fossil images. A PDF format will also be available in a future update."
+    },
+    {
+      "question": "Can I share individual specimens?",
+      "answer": "Absolutely! You can also make a specimen public and share the URL with your friends. Additionally, you can generate a ready-to-use description for selling fossils on auction sites."
+    },
+    {
+      "question": "Will I lose my premium status if I sign out?",
+      "answer": "Your premium access is linked to your account, not your device. Just sign back in with the same account to restore access to Pro or Max features."
+    },
+    {
+      "question": "Is there a way to organize fossils into groups?",
+      "answer": "Yes! You can use tags to categorize and filter your fossils. Free users can create up to 5 tags. Pro and Max users have unlimited tags and advanced filtering options."
+    },
+    {
+      "question": "How can I contact support?",
+      "answer": "You can reach out to us anytime via email from within the app. Go to Settings → About → Contact."
+    }
+  ],
+  "es": [
+    {
+      "question": "¿Puedo usar la app sin crear una cuenta?",
+      "answer": "¡Sí! Puedes usar FossilVault sin registrarte. Tus datos se almacenan localmente en tu dispositivo. Sin embargo, sin una cuenta, no podrás sincronizar tu colección entre dispositivos ni hacer una copia de seguridad en la nube."
+    },
+    {
+      "question": "¿Qué pasa si elimino la app sin hacer una copia de seguridad?",
+      "answer": "Si usas una cuenta local y eliminas la app, todos tus datos de fósiles se perderán de forma permanente. Te recomendamos crear una cuenta para hacer una copia de seguridad segura y sincronizar tu colección."
+    },
+    {
+      "question": "¿Cómo puedo hacer una copia de seguridad de mi colección?",
+      "answer": "Puedes hacer una copia de seguridad de tu colección de varias maneras: Exportar tu colección como archivos CSV o ZIP (disponible con Pro y Max), o sincronizar de forma segura tu colección en línea creando una cuenta."
+    },
+    {
+      "question": "¿Qué incluye la versión gratuita?",
+      "answer": "La versión gratuita te permite:\n- Agregar hasta 10 especímenes\n- Adjuntar hasta 5 fotos por espécimen\n- 200MB de espacio de almacenamiento\n- Copia de seguridad y sincronización en la nube\n- Disponibilidad multiplataforma (iOS, Android, Web)\n- Etiquetas ilimitadas\n- Importar desde CSV\n- Funcionalidad de exportación\n- Acceso completo al estante de exhibición\n- Hacer público 1 espécimen\n\nNota: Las estadísticas, experiencia sin anuncios y especímenes públicos ilimitados están disponibles en los planes Pro y Max."
+    },
+    {
+      "question": "¿Qué incluye la versión Pro?",
+      "answer": "Con Pro obtienes:\n- Especímenes ilimitados\n- Hasta 10 fotos por espécimen\n- 5GB de espacio de almacenamiento\n- Copia de seguridad y sincronización en la nube\n- Disponibilidad multiplataforma (iOS, Android, Web)\n- Etiquetas ilimitadas\n- Funcionalidad de importación y exportación\n- Acceso completo al estante de exhibición\n- Estadísticas e información de la colección\n- Especímenes públicos ilimitados\n- Subtítulos y descripciones generados por IA para compartir o vender\n- Soporte prioritario\n- Disfrutar de una experiencia limpia y sin anuncios"
+    },
+    {
+      "question": "¿Qué incluye la versión Max?",
+      "answer": "Con Max obtienes todo lo de Pro más:\n- Especímenes ilimitados\n- Hasta 20 fotos por espécimen\n- 15GB de espacio de almacenamiento\n- Funciones avanzadas de colección\n- Soporte prioritario"
+    },
+    {
+      "question": "¿Cuánto cuestan Pro y Max?",
+      "answer": "Puedes actualizar en cualquier momento. Ofrecemos suscripciones mensuales y anuales para los planes Pro y Max.\nLa información de precios está disponible en la app."
+    },
+    {
+      "question": "¿Puedo exportar mi colección?",
+      "answer": "Sí, pero solo con los planes Pro o Max. Puedes exportar tu colección como un archivo CSV o un ZIP con los datos y las imágenes. También estará disponible un formato PDF en una futura actualización."
+    },
+    {
+      "question": "¿Puedo compartir especímenes individuales?",
+      "answer": "¡Claro! Puedes hacer público un espécimen y compartir la URL con tus amigos. Además, puedes generar una descripción para vender fósiles en sitios de subastas."
+    },
+    {
+      "question": "¿Perderé mi estado premium si cierro sesión?",
+      "answer": "Tu acceso premium está vinculado a tu cuenta, no a tu dispositivo. Solo inicia sesión con la misma cuenta para restaurar tus beneficios de Pro o Max."
+    },
+    {
+      "question": "¿Puedo organizar mis fósiles en grupos?",
+      "answer": "Sí. Puedes usar etiquetas para clasificar y filtrar tus fósiles. Los usuarios gratuitos pueden crear hasta 5 etiquetas. Los usuarios de Pro y Max tienen etiquetas ilimitadas y filtros avanzados."
+    },
+    {
+      "question": "¿Cómo contacto con soporte?",
+      "answer": "Puedes escribirnos por correo electrónico desde la app. Ve a Configuración → Acerca de → Contacto."
+    }
+  ],
+  "pt-BR": [
+    {
+      "question": "Posso usar o app sem criar uma conta?",
+      "answer": "Sim! Você pode usar o FossilVault sem se cadastrar. Seus dados são armazenados localmente no dispositivo. No entanto, sem uma conta, não será possível sincronizar sua coleção entre dispositivos ou fazer backup na nuvem."
+    },
+    {
+      "question": "O que acontece se eu excluir o app sem fazer backup?",
+      "answer": "Se você estiver usando uma conta local e excluir o app, todos os seus dados fósseis serão perdidos permanentemente. Recomendamos criar uma conta para fazer backup e sincronizar sua coleção com segurança."
+    },
+    {
+      "question": "Como faço backup da minha coleção de fósseis?",
+      "answer": "Você pode fazer backup da sua coleção de várias maneiras: Exportar sua coleção em CSV ou como um pacote ZIP com os dados e imagens (disponível com Pro e Max), ou sincronizar de forma segura sua coleção online criando uma conta para backup automático entre dispositivos."
+    },
+    {
+      "question": "O que está incluído na versão gratuita?",
+      "answer": "A versão gratuita permite:\n- Adicionar até 10 espécimes\n- Anexar até 5 fotos por espécime\n- 200MB de espaço de armazenamento\n- Backup e sincronização na nuvem\n- Disponibilidade multiplataforma (iOS, Android, Web)\n- Etiquetas ilimitadas\n- Importação de CSV\n- Funcionalidade de exportação\n- Acesso completo à prateleira de exibição\n- Tornar 1 espécime público\n\nObservação: Estatísticas, experiência sem anúncios e espécimes públicos ilimitados estão disponíveis nos planos Pro e Max."
+    },
+    {
+      "question": "O que está incluído na versão Pro?",
+      "answer": "Com o Pro você tem acesso a:\n- Espécimes ilimitados\n- Até 10 fotos por espécime\n- 5GB de espaço de armazenamento\n- Backup e sincronização na nuvem\n- Disponibilidade multiplataforma (iOS, Android, Web)\n- Etiquetas ilimitadas\n- Funcionalidade de importação e exportação\n- Acesso completo à prateleira de exibição\n- Estatísticas e insights da coleção\n- Espécimes públicos ilimitados\n- Legendas e descrições geradas por IA para compartilhar ou vender\n- Suporte prioritário\n- Experiência sem anúncios"
+    },
+    {
+      "question": "O que está incluído na versão Max?",
+      "answer": "Com o Max você tem tudo do Pro mais:\n- Espécimes ilimitados\n- Até 20 fotos por espécime\n- 15GB de espaço de armazenamento\n- Recursos avançados de coleção\n- Suporte prioritário"
+    },
+    {
+      "question": "Quanto custam Pro e Max?",
+      "answer": "Você pode fazer upgrade a qualquer momento. Oferecemos assinaturas mensais e anuais para os planos Pro e Max.\nAs informações de preços estão disponíveis no app."
+    },
+    {
+      "question": "Posso exportar minha coleção?",
+      "answer": "Sim, mas apenas nos planos Pro ou Max. Você pode exportar sua coleção em CSV ou como um pacote ZIP com os dados e imagens dos fósseis. Um formato PDF estará disponível em uma atualização futura."
+    },
+    {
+      "question": "Posso compartilhar espécimes individuais?",
+      "answer": "Com certeza! Você pode tornar um espécime público e compartilhar a URL com seus amigos. Além disso, é possível gerar descrições para sites de leilões."
+    },
+    {
+      "question": "Vou perder meu plano premium se sair da conta?",
+      "answer": "O acesso premium está vinculado à sua conta, não ao dispositivo. Basta entrar com a mesma conta para recuperar os recursos do Pro ou Max."
+    },
+    {
+      "question": "Posso organizar fósseis em grupos?",
+      "answer": "Sim! Você pode usar etiquetas para categorizar e filtrar seus fósseis. Usuários gratuitos podem criar até 5 etiquetas. Os planos Pro e Max permitem etiquetas ilimitadas e filtros avançados."
+    },
+    {
+      "question": "Como entro em contato com o suporte?",
+      "answer": "Você pode nos contatar por e-mail dentro do app. Vá em Configurações → Acerca de → Contato."
+    }
+  ]
+}

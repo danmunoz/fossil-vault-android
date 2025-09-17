@@ -6,6 +6,8 @@ import com.dmdev.fossilvaultanda.data.models.Specimen
 import com.dmdev.fossilvaultanda.data.models.StoredImage
 import com.dmdev.fossilvaultanda.data.models.Taxonomy
 import com.dmdev.fossilvaultanda.data.models.UserProfile
+import com.dmdev.fossilvaultanda.data.models.enums.AcquisitionMethod
+import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
@@ -144,6 +146,14 @@ class AddSpecimenViewModel @Inject constructor(
 
     fun updateAcquisitionDate(date: Instant?) {
         _formState.value = _formState.value.copy(acquisitionDate = date)
+    }
+
+    fun updateAcquisitionMethod(method: AcquisitionMethod?) {
+        _formState.value = _formState.value.copy(acquisitionMethod = method)
+    }
+
+    fun updateCondition(condition: Condition?) {
+        _formState.value = _formState.value.copy(condition = condition)
     }
 
     fun updatePricePaid(price: Double?, currency: Currency?) {
@@ -307,6 +317,8 @@ class AddSpecimenViewModel @Inject constructor(
             unit = state.unit,
             collectionDate = state.collectionDate,
             acquisitionDate = state.acquisitionDate,
+            acquisitionMethod = state.acquisitionMethod,
+            condition = state.condition,
             inventoryId = state.inventoryId.takeIf { it.isNotBlank() },
             notes = state.notes.takeIf { it.isNotBlank() },
             imageUrls = state.imageUrls,
@@ -357,6 +369,10 @@ data class SpecimenFormState(
     // Dates
     val collectionDate: Instant? = null,
     val acquisitionDate: Instant? = null,
+
+    // Acquisition Information
+    val acquisitionMethod: AcquisitionMethod? = null,
+    val condition: Condition? = null,
     
     // Valuation
     val pricePaid: Double? = null,
@@ -391,6 +407,8 @@ data class SpecimenFormState(
                 unit = specimen.unit,
                 collectionDate = specimen.collectionDate,
                 acquisitionDate = specimen.acquisitionDate,
+                acquisitionMethod = specimen.acquisitionMethod,
+                condition = specimen.condition,
                 pricePaid = specimen.pricePaid,
                 pricePaidCurrency = specimen.pricePaidCurrency,
                 estimatedValue = specimen.estimatedValue,

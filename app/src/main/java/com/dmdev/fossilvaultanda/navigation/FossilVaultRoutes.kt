@@ -38,7 +38,14 @@ sealed class FossilVaultRoute {
     
     @Serializable
     data object CurrencyPicker : FossilVaultRoute()
-    
+
+    // Support & Info Flow
+    @Serializable
+    data object FAQ : FossilVaultRoute()
+
+    @Serializable
+    data object About : FossilVaultRoute()
+
     // Add Specimen Flow
     @Serializable
     data class AddSpecimen(val specimenId: String? = null) : FossilVaultRoute()

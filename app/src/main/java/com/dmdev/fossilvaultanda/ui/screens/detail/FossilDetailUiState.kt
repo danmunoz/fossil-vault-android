@@ -29,10 +29,17 @@ data class FossilDetailUiState(
     
     val hasValueData: Boolean
         get() = specimen?.let {
-            it.pricePaid != null || 
-            it.estimatedValue != null || 
+            it.pricePaid != null ||
+            it.estimatedValue != null ||
             !it.inventoryId.isNullOrBlank() ||
             !it.notes.isNullOrBlank()
+        } ?: false
+
+    val hasAcquisitionData: Boolean
+        get() = specimen?.let {
+            it.acquisitionMethod != null ||
+            it.condition != null ||
+            it.acquisitionDate != null
         } ?: false
     
     val hasCoordinates: Boolean

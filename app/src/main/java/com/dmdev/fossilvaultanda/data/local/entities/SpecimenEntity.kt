@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey
 import com.dmdev.fossilvaultanda.data.models.Specimen
 import com.dmdev.fossilvaultanda.data.models.StoredImage
 import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
+import com.dmdev.fossilvaultanda.data.models.enums.AcquisitionMethod
+import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
@@ -69,6 +71,10 @@ data class SpecimenEntity(
     val tagNames: String = "[]", // JSON array
     val isPublic: Boolean = false,
     
+    // Acquisition Information
+    val acquisitionMethod: String? = null,
+    val condition: String? = null,
+
     // Valuation
     val pricePaid: Double? = null,
     val pricePaidCurrency: String? = null,
@@ -103,6 +109,8 @@ data class SpecimenEntity(
             collectionDate = collectionDate?.let { Instant.parse(it) },
             acquisitionDate = acquisitionDate?.let { Instant.parse(it) },
             creationDate = Instant.parse(creationDate),
+            acquisitionMethod = acquisitionMethod?.let { AcquisitionMethod.fromSerializedName(it) },
+            condition = condition?.let { Condition.fromSerializedName(it) },
             inventoryId = inventoryId,
             notes = notes,
             imageUrls = try {
@@ -230,6 +238,8 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         collectionDate = collectionDate?.toString(),
         acquisitionDate = acquisitionDate?.toString(),
         creationDate = creationDate.toString(),
+        acquisitionMethod = acquisitionMethod?.serializedName,
+        condition = condition?.serializedName,
         inventoryId = inventoryId,
         notes = notes,
         imageUrls = Json.encodeToString(imageUrls),

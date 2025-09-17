@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.AcquisitionCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.ImageGallery
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.LocationDiscoveryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.PhysicalPropertiesCard
@@ -223,7 +224,14 @@ private fun PhoneFossilDetailContent(
                 onTagClick = { /* Handle tag click */ }
             )
         }
-        
+
+        // Acquisition information card (conditional)
+        if (uiState.hasAcquisitionData) {
+            item {
+                AcquisitionCard(specimen = specimen)
+            }
+        }
+
         // Location & discovery card (conditional)
         if (uiState.hasLocationData) {
             item {
@@ -286,7 +294,13 @@ private fun TabletFossilDetailContent(
                 onTagClick = { /* Handle tag click */ }
             )
         }
-        
+
+        if (uiState.hasAcquisitionData) {
+            item {
+                AcquisitionCard(specimen = specimen)
+            }
+        }
+
         if (uiState.hasLocationData) {
             item {
                 LocationDiscoveryCard(
