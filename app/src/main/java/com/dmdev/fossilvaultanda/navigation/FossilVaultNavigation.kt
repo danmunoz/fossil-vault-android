@@ -25,6 +25,7 @@ import com.dmdev.fossilvaultanda.ui.screens.settings.SettingsScreen
 import com.dmdev.fossilvaultanda.ui.screens.settings.SizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenViewModel
+import com.dmdev.fossilvaultanda.ui.screens.specimen.AdvancedGeologicalTimePickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.ElementPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.LocationPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
@@ -204,6 +205,9 @@ fun FossilVaultNavigation(
                 onNavigateToPeriodPicker = {
                     navController.navigate(FossilVaultRoute.PeriodPicker)
                 },
+                onNavigateToAdvancedGeologicalTimePicker = {
+                    navController.navigate(FossilVaultRoute.AdvancedGeologicalTimePicker)
+                },
                 onNavigateToElementPicker = {
                     navController.navigate(FossilVaultRoute.ElementPicker)
                 },
@@ -241,7 +245,29 @@ fun FossilVaultNavigation(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
+        composable<FossilVaultRoute.AdvancedGeologicalTimePicker> {
+            val parentEntry = remember(navController) {
+                navController.currentBackStack.value.first { entry ->
+                    entry.destination.route?.contains("AddSpecimen") == true
+                }
+            }
+            val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
+            val formState = addSpecimenViewModel.formState.collectAsState().value
+
+            AdvancedGeologicalTimePickerScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onGeologicalTimeSelected = { geologicalTime ->
+                    addSpecimenViewModel.updateGeologicalTime(geologicalTime)
+                    navController.navigateUp()
+                },
+                initialGeologicalTime = formState.geologicalTime,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         composable<FossilVaultRoute.ElementPicker> {
             val parentEntry = remember(navController) {
                 navController.currentBackStack.value.first { entry ->

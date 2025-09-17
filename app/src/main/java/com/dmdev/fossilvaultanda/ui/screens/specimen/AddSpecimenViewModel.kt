@@ -86,6 +86,11 @@ class AddSpecimenViewModel @Inject constructor(
         clearValidationError("species")
     }
 
+    fun updateGeologicalTime(geologicalTime: GeologicalTime) {
+        _formState.value = _formState.value.copy(geologicalTime = geologicalTime)
+        clearValidationError("geologicalTime")
+    }
+
     fun updatePeriod(period: Period) {
         val geologicalTime = PeriodToGeologicalTimeMapper.createGeologicalTimeFromPeriodSelection(period)
         _formState.value = _formState.value.copy(geologicalTime = geologicalTime)

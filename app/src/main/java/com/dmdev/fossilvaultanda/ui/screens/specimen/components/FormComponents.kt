@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dmdev.fossilvaultanda.ui.theme.Dimensions
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
+import com.fossilVault.geological.GeologicalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -312,6 +313,27 @@ fun DimensionInputRow(
             )
         }
     }
+}
+
+@Composable
+fun GeologicalTimeSelectionField(
+    geologicalTime: GeologicalTime,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isRequired: Boolean = true,
+    errorMessage: String? = null
+) {
+    val displayValue = geologicalTime.displayString.takeIf { it.isNotBlank() } ?: ""
+
+    SelectionField(
+        value = displayValue,
+        label = "Geological Time",
+        placeholder = "Select geological time",
+        isRequired = isRequired,
+        errorMessage = errorMessage,
+        onClick = onClick,
+        modifier = modifier
+    )
 }
 
 @Preview(showBackground = true)

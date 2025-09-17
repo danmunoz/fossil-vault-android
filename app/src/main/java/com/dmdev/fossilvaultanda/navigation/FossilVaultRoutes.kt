@@ -45,7 +45,10 @@ sealed class FossilVaultRoute {
     
     @Serializable
     data object PeriodPicker : FossilVaultRoute()
-    
+
+    @Serializable
+    data object AdvancedGeologicalTimePicker : FossilVaultRoute()
+
     @Serializable
     data object ElementPicker : FossilVaultRoute()
     

@@ -56,8 +56,10 @@ import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.fossilVault.geological.GeologicalTime
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DatePickerField
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.DimensionInputRow
+import com.dmdev.fossilvaultanda.ui.screens.specimen.components.GeologicalTimeSelectionField
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ImagePickerManager
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.PhotoGrid
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.SectionHeader
@@ -72,6 +74,7 @@ import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 fun AddSpecimenScreen(
     onNavigateBack: () -> Unit,
     onNavigateToPeriodPicker: () -> Unit,
+    onNavigateToAdvancedGeologicalTimePicker: () -> Unit,
     onNavigateToElementPicker: () -> Unit,
     onNavigateToSizeUnitPicker: () -> Unit,
     onNavigateToCurrencyPicker: (String) -> Unit, // "price" or "value"
@@ -166,11 +169,11 @@ fun AddSpecimenScreen(
             // Basic Information Section
             BasicInformationSection(
                 species = formState.species,
-                period = viewModel.getCurrentSelectedPeriod(),
+                geologicalTime = formState.geologicalTime,
                 element = formState.element,
                 customElement = formState.customElement,
                 onSpeciesChange = viewModel::updateSpecies,
-                onPeriodClick = onNavigateToPeriodPicker,
+                onGeologicalTimeClick = onNavigateToAdvancedGeologicalTimePicker,
                 onElementClick = onNavigateToElementPicker,
                 validationErrors = validationErrors,
                 userProfile = userProfile,
@@ -317,11 +320,11 @@ private fun PhotoSection(
 @Composable
 private fun BasicInformationSection(
     species: String,
-    period: Period,
+    geologicalTime: GeologicalTime,
     element: FossilElement,
     customElement: String,
     onSpeciesChange: (String) -> Unit,
-    onPeriodClick: () -> Unit,
+    onGeologicalTimeClick: () -> Unit,
     onElementClick: () -> Unit,
     validationErrors: Map<String, String>,
     userProfile: com.dmdev.fossilvaultanda.data.models.UserProfile?,
@@ -348,13 +351,11 @@ private fun BasicInformationSection(
         
         Spacer(modifier = Modifier.height(Dimensions.medium))
         
-        SelectionField(
-            value = if (period != Period.UNKNOWN) period.displayName else "",
-            label = "Geological Period",
-            placeholder = "Select period",
+        GeologicalTimeSelectionField(
+            geologicalTime = geologicalTime,
+            onClick = onGeologicalTimeClick,
             isRequired = true,
-            errorMessage = validationErrors["period"],
-            onClick = onPeriodClick
+            errorMessage = validationErrors["geologicalTime"]
         )
         
         Spacer(modifier = Modifier.height(Dimensions.medium))
@@ -637,6 +638,7 @@ fun AddSpecimenScreenPreview() {
         AddSpecimenScreen(
             onNavigateBack = { },
             onNavigateToPeriodPicker = { },
+            onNavigateToAdvancedGeologicalTimePicker = { },
             onNavigateToElementPicker = { },
             onNavigateToSizeUnitPicker = { },
             onNavigateToCurrencyPicker = { },
