@@ -39,35 +39,55 @@ fun SpecimenGrid(
     onSpecimenClick: (Specimen) -> Unit = {},
     onSpecimenAction: (Specimen) -> Unit = {},
     headerContent: (@Composable () -> Unit)? = null,
+    hasAnySpecimens: Boolean = true,
+    isFiltered: Boolean = false,
+    onAddSpecimen: () -> Unit = {},
+    onClearFilters: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyGridState()
-    if (specimens.isEmpty()) {
-        EmptyState(
-            message = "No specimens found",
-            modifier = modifier
-        )
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            state = state,
-        ) {
-            headerContent?.let { content ->
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    content()
-                }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        state = state,
+    ) {
+        // Always show header content (search and filter sections)
+        headerContent?.let { content ->
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                content()
             }
-            
-            items(specimens,key = {it.id}) { specimen ->
+        }
+
+        // Show specimens if we have them
+        if (specimens.isNotEmpty()) {
+            items(specimens, key = { it.id }) { specimen ->
                 SpecimenCard(
                     specimen = specimen,
                     onCardClick = { onSpecimenClick(specimen) },
                     onActionClick = { onSpecimenAction(specimen) }
                 )
+            }
+        } else {
+            // Show appropriate empty state
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                if (!hasAnySpecimens) {
+                    // User has no specimens at all
+                    NoSpecimensEmpty(
+                        onAddSpecimen = onAddSpecimen,
+                        modifier = Modifier.padding(top = 32.dp)
+                    )
+                } else {
+                    // User has specimens but search/filter returned no results
+                    NoResultsEmpty(
+                        hasFiltersActive = isFiltered,
+                        onClearFilters = onClearFilters,
+                        modifier = Modifier.padding(top = 32.dp)
+                    )
+                }
             }
         }
     }
@@ -79,33 +99,53 @@ fun SpecimenList(
     onSpecimenClick: (Specimen) -> Unit = {},
     onSpecimenAction: (Specimen) -> Unit = {},
     headerContent: (@Composable () -> Unit)? = null,
+    hasAnySpecimens: Boolean = true,
+    isFiltered: Boolean = false,
+    onAddSpecimen: () -> Unit = {},
+    onClearFilters: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state = rememberLazyListState()
-    if (specimens.isEmpty()) {
-        EmptyState(
-            message = "No specimens found",
-            modifier = modifier
-        )
-    } else {
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            state = state,
-        ) {
-            headerContent?.let { content ->
-                item {
-                    content()
-                }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        state = state,
+    ) {
+        // Always show header content (search and filter sections)
+        headerContent?.let { content ->
+            item {
+                content()
             }
-            
-            items(specimens, key = {it.id}) { specimen ->
+        }
+
+        // Show specimens if we have them
+        if (specimens.isNotEmpty()) {
+            items(specimens, key = { it.id }) { specimen ->
                 SpecimenListItem(
                     specimen = specimen,
                     onCardClick = { onSpecimenClick(specimen) },
                     onActionClick = { onSpecimenAction(specimen) }
                 )
+            }
+        } else {
+            // Show appropriate empty state
+            item {
+                if (!hasAnySpecimens) {
+                    // User has no specimens at all
+                    NoSpecimensEmpty(
+                        onAddSpecimen = onAddSpecimen,
+                        modifier = Modifier.padding(top = 32.dp)
+                    )
+                } else {
+                    // User has specimens but search/filter returned no results
+                    NoResultsEmpty(
+                        hasFiltersActive = isFiltered,
+                        onClearFilters = onClearFilters,
+                        modifier = Modifier.padding(top = 32.dp)
+                    )
+                }
             }
         }
     }

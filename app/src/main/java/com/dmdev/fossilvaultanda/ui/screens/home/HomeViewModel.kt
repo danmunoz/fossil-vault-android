@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -51,6 +52,29 @@ class HomeViewModel @Inject constructor(
             initialValue = emptyList()
         )
     
+    // Check if user has any specimens at all
+    val hasAnySpecimens: StateFlow<Boolean> = _specimens
+        .onEach { specimens ->
+            Log.d("HomeViewModel", "hasAnySpecimens updated: ${specimens.isNotEmpty()}")
+        }
+        .map { specimens -> specimens.isNotEmpty() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
+        )
+
+    // Check if any filters are currently active
+    val isFiltered: StateFlow<Boolean> = combine(
+        searchQuery, selectedPeriod
+    ) { query, period ->
+        query.isNotBlank() || period != null
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
     // Filtered and sorted specimens
     val filteredSpecimens: StateFlow<List<Specimen>> = combine(
         _specimens, searchQuery, selectedPeriod, sortOption

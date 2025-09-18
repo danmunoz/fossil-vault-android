@@ -42,6 +42,8 @@ fun HomeScreen(
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
     val sortOption by viewModel.sortOption.collectAsState()
     val displayMode by viewModel.displayMode.collectAsState()
+    val hasAnySpecimens by viewModel.hasAnySpecimens.collectAsState()
+    val isFiltered by viewModel.isFiltered.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     
     Scaffold(
@@ -100,10 +102,14 @@ fun HomeScreen(
                 SpecimenGrid(
                     specimens = filteredSpecimens,
                     onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
-                    onSpecimenAction = { specimen -> 
+                    onSpecimenAction = { specimen ->
                         // TODO: Show bottom sheet or context menu
                     },
                     headerContent = headerContent,
+                    hasAnySpecimens = hasAnySpecimens,
+                    isFiltered = isFiltered,
+                    onAddSpecimen = onAddSpecimen,
+                    onClearFilters = viewModel::clearFilters,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -113,10 +119,14 @@ fun HomeScreen(
                 SpecimenList(
                     specimens = filteredSpecimens,
                     onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
-                    onSpecimenAction = { specimen -> 
+                    onSpecimenAction = { specimen ->
                         // TODO: Show bottom sheet or context menu
                     },
                     headerContent = headerContent,
+                    hasAnySpecimens = hasAnySpecimens,
+                    isFiltered = isFiltered,
+                    onAddSpecimen = onAddSpecimen,
+                    onClearFilters = viewModel::clearFilters,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
