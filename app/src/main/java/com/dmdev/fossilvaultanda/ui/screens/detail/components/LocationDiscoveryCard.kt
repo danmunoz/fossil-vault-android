@@ -162,67 +162,6 @@ fun LocationDiscoveryCard(
                 )
             }
             
-            // Collection date
-            specimen.collectionDate?.let { collectionDate ->
-                val formattedDate = collectionDate.toString().substringBefore('T')
-                
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            text = formattedDate,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    supportingContent = { 
-                        Text(
-                            text = "Collection date",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            Icons.Default.DateRange, 
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    modifier = Modifier.semantics {
-                        contentDescription = "Collection date: $formattedDate"
-                    }
-                )
-            }
-            
-            // Acquisition date
-            specimen.acquisitionDate?.let { acquisitionDate ->
-                val formattedDate = acquisitionDate.toString().substringBefore('T')
-                
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            text = formattedDate,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    supportingContent = { 
-                        Text(
-                            text = "Acquisition date",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            Icons.Default.DateRange, 
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    modifier = Modifier.semantics {
-                        contentDescription = "Acquisition date: $formattedDate"
-                    }
-                )
-            }
         }
     }
 }

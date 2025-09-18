@@ -72,13 +72,13 @@ fun AcquisitionCard(
                 )
             }
 
-            // Condition
-            if (specimen.condition != null) {
+            // Collection Date
+            if (specimen.collectionDate != null) {
                 AcquisitionInfoRow(
-                    icon = Icons.Default.Info,
-                    label = "Condition",
-                    value = specimen.condition.displayString,
-                    contentDescription = "Condition: ${specimen.condition.displayString}"
+                    icon = Icons.Default.DateRange,
+                    label = "Collection Date",
+                    value = specimen.collectionDate.toString().split("T")[0], // Simple date formatting
+                    contentDescription = "Collection date: ${specimen.collectionDate}"
                 )
             }
 
@@ -94,7 +94,7 @@ fun AcquisitionCard(
 
             // Show empty state if no acquisition info
             if (specimen.acquisitionMethod == null &&
-                specimen.condition == null &&
+                specimen.collectionDate == null &&
                 specimen.acquisitionDate == null) {
                 Text(
                     text = "No acquisition information available",

@@ -40,10 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.AcquisitionCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.ImageGallery
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.InventoryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.LocationDiscoveryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.PhysicalPropertiesCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.SpeciesClassificationCard
-import com.dmdev.fossilvaultanda.ui.screens.detail.components.ValueInventoryCard
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.ValueCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,11 +256,16 @@ private fun PhoneFossilDetailContent(
             }
         }
         
-        // Value & inventory card (conditional)
+        // Value card (conditional)
         if (uiState.hasValueData) {
             item {
-                ValueInventoryCard(specimen = specimen)
+                ValueCard(specimen = specimen)
             }
+        }
+
+        // Inventory card (always show as it includes creation date)
+        item {
+            InventoryCard(specimen = specimen)
         }
     }
 }
@@ -324,8 +330,12 @@ private fun TabletFossilDetailContent(
         
         if (uiState.hasValueData) {
             item {
-                ValueInventoryCard(specimen = specimen)
+                ValueCard(specimen = specimen)
             }
+        }
+
+        item {
+            InventoryCard(specimen = specimen)
         }
     }
 }

@@ -62,9 +62,9 @@ fun PhysicalPropertiesCard(
             
             // Summary row if multiple dimensions exist
             val dimensions = listOfNotNull(
+                specimen.length?.let { "L: ${it}${specimen.unit.symbol}" },
                 specimen.width?.let { "W: ${it}${specimen.unit.symbol}" },
-                specimen.height?.let { "H: ${it}${specimen.unit.symbol}" },
-                specimen.length?.let { "L: ${it}${specimen.unit.symbol}" }
+                specimen.height?.let { "H: ${it}${specimen.unit.symbol}" }
             )
             
             if (dimensions.size > 1) {
@@ -96,6 +96,15 @@ fun PhysicalPropertiesCard(
             }
             
             // Individual measurements
+            specimen.length?.let { length ->
+                DimensionListItem(
+                    label = "Length",
+                    value = length,
+                    unit = specimen.unit.symbol,
+                    icon = Icons.Default.Height
+                )
+            }
+
             specimen.width?.let { width ->
                 DimensionListItem(
                     label = "Width",
@@ -104,22 +113,13 @@ fun PhysicalPropertiesCard(
                     icon = Icons.Default.SwapHoriz
                 )
             }
-            
+
             specimen.height?.let { height ->
                 DimensionListItem(
                     label = "Height",
                     value = height,
                     unit = specimen.unit.symbol,
                     icon = Icons.Default.SwapVert
-                )
-            }
-            
-            specimen.length?.let { length ->
-                DimensionListItem(
-                    label = "Length",
-                    value = length,
-                    unit = specimen.unit.symbol,
-                    icon = Icons.Default.Height
                 )
             }
         }
