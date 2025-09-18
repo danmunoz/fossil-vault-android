@@ -31,6 +31,7 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.LocationPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleCurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.stats.StatsScreen
 import com.dmdev.fossilvaultanda.ui.screens.subscription.LimitReachedScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.AboutScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.FAQScreen
@@ -101,6 +102,9 @@ fun FossilVaultNavigation(
                 onNavigateToSettings = {
                     navController.navigate(FossilVaultRoute.Settings)
                 },
+                onNavigateToStats = {
+                    navController.navigate(FossilVaultRoute.Stats)
+                },
                 onAddSpecimen = {
                     navController.navigate(FossilVaultRoute.AddSpecimen())
                 },
@@ -110,7 +114,16 @@ fun FossilVaultNavigation(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
+        composable<FossilVaultRoute.Stats> {
+            StatsScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         composable<FossilVaultRoute.FossilDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<FossilVaultRoute.FossilDetail>()
             FossilDetailScreen(

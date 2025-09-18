@@ -19,7 +19,10 @@ sealed class FossilVaultRoute {
     // Main App Flow
     @Serializable
     data object Home : FossilVaultRoute()
-    
+
+    @Serializable
+    data object Stats : FossilVaultRoute()
+
     @Serializable
     data class FossilDetail(val specimenId: String) : FossilVaultRoute()
     

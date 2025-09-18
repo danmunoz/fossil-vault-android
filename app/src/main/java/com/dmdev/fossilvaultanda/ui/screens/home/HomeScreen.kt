@@ -30,8 +30,8 @@ import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 fun HomeScreen(
     authenticationManager: AuthenticationManager? = null,
     onNavigateToSpecimen: (String) -> Unit = {},
-    onNavigateToStats: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
+    onNavigateToStats: () -> Unit = {},
     onAddSpecimen: () -> Unit = {},
     onNavigateToLimitReached: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -48,8 +48,8 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             HomeTopBar(
-                onNavigateToStats = onNavigateToStats,
-                onNavigateToSettings = onNavigateToSettings
+                onNavigateToSettings = onNavigateToSettings,
+                onNavigateToStats = onNavigateToStats
             )
         },
         floatingActionButton = {
