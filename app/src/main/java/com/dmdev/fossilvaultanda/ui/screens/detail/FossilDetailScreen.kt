@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.AcquisitionCard
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.FullScreenImageViewer
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.ImageGallery
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.InventoryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.LocationDiscoveryCard
@@ -188,6 +189,18 @@ fun FossilDetailScreen(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
+            }
+        }
+
+        // Full-screen image viewer overlay
+        uiState.specimen?.let { specimen ->
+            if (uiState.isImageFullScreen) {
+                FullScreenImageViewer(
+                    images = specimen.imageUrls,
+                    currentIndex = uiState.currentImageIndex,
+                    onDismiss = { viewModel.setImageFullScreen(false) },
+                    onImageIndexChange = { viewModel.setCurrentImageIndex(it) }
+                )
             }
         }
     }
