@@ -284,20 +284,54 @@ class FirestoreDataRepository @Inject constructor(
     override suspend fun deleteSpecimen(identifier: String): Unit = withContext(Dispatchers.IO) {
         try {
             val specimen = getSpecimen(identifier)
-            
+
             // Delete associated images
             specimen?.let {
                 if (it.imageUrls.isNotEmpty()) {
                     imageStoring.deleteImages(it.imageUrls)
                 }
             }
-            
+
             firestore.collection("specimens")
                 .document(identifier)
                 .delete()
                 .await()
         } catch (e: Exception) {
             throw DataException.FirestoreException("Failed to delete specimen", e)
+        }
+    }
+
+    override suspend fun getSpecimenCount(): Int = withContext(Dispatchers.IO) {
+        try {
+            val userId = authManager.getCurrentUserId()
+                ?: throw DataException.AuthenticationException("User not authenticated")
+
+            val result = firestore.collection("specimens")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            result.size()
+        } catch (e: Exception) {
+            if (e is DataException) throw e
+            throw DataException.FirestoreException("Failed to get specimen count", e)
+        }
+    }
+
+    override suspend fun getStorageUsage(): Long = withContext(Dispatchers.IO) {
+        try {
+            val specimens = getAllSpecimens()
+            var totalBytes = 0L
+
+            specimens.forEach { specimen ->
+                // Estimate storage based on image count and average size
+                // This is a simple estimation - in a real app you'd track actual file sizes
+                totalBytes += specimen.imageUrls.size * (2 * 1024 * 1024) // 2MB per image estimate
+            }
+
+            totalBytes
+        } catch (e: Exception) {
+            0L // Return 0 if we can't calculate usage
         }
     }
     

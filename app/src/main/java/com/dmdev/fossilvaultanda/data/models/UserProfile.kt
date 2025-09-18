@@ -13,7 +13,10 @@ data class UserProfile(
     val bio: String? = null,
     val isPublic: Boolean = false,
     val picture: StoredImage? = null,
-    val settings: AppSettings = AppSettings()
+    val settings: AppSettings = AppSettings(),
+    val subscriptionStatus: SubscriptionStatus = SubscriptionStatus.free(),
+    val specimenCount: Int = 0,
+    val storageUsageBytes: Long = 0L
 ) {
     fun validate(): Result<Unit> {
         return when {
@@ -28,6 +31,31 @@ data class UserProfile(
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
     
+    /**
+     * Helper properties for subscription management
+     */
+    val canAddSpecimen: Boolean
+        get() = if (subscriptionStatus.usageLimits.isUnlimitedSpecimens) {
+            true
+        } else {
+            specimenCount < subscriptionStatus.usageLimits.maxSpecimens
+        }
+
+    val remainingSpecimenSlots: Int
+        get() = if (subscriptionStatus.usageLimits.isUnlimitedSpecimens) {
+            Int.MAX_VALUE
+        } else {
+            maxOf(0, subscriptionStatus.usageLimits.maxSpecimens - specimenCount)
+        }
+
+    val storageUsagePercentage: Float
+        get() {
+            val maxStorage = subscriptionStatus.usageLimits.maxStorageBytes
+            return if (maxStorage > 0) {
+                (storageUsageBytes.toFloat() / maxStorage.toFloat()).coerceIn(0f, 1f)
+            } else 0f
+        }
+
     /**
      * Converts the UserProfile to a Map for Firebase storage with proper enum serialization
      */
@@ -45,7 +73,17 @@ data class UserProfile(
                 "unit" to settings.unit.serializedName,
                 "divideCarboniferous" to settings.divideCarboniferous,
                 "defaultCurrency" to settings.defaultCurrency.serializedName
-            )
+            ),
+            "subscriptionStatus" to mapOf(
+                "tier" to subscriptionStatus.tier.serializedName,
+                "isActive" to subscriptionStatus.isActive,
+                "expirationDate" to subscriptionStatus.expirationDate?.toString(),
+                "willRenew" to subscriptionStatus.willRenew,
+                "revenueCatCustomerId" to subscriptionStatus.revenueCatCustomerId,
+                "productIdentifier" to subscriptionStatus.productIdentifier
+            ),
+            "specimenCount" to specimenCount,
+            "storageUsageBytes" to storageUsageBytes
         )
     }
 }

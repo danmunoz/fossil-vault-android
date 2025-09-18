@@ -18,6 +18,8 @@ interface DatabaseManaging {
     suspend fun getSpecimen(identifier: String): Specimen?
     suspend fun getAllSpecimens(): List<Specimen>
     suspend fun deleteSpecimen(identifier: String)
+    suspend fun getSpecimenCount(): Int
+    suspend fun getStorageUsage(): Long
     
     // Tag operations
     suspend fun save(tag: Tag)

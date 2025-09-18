@@ -9,6 +9,7 @@ import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
 import com.dmdev.fossilvaultanda.data.models.enums.SortOption
 import com.dmdev.fossilvaultanda.data.repository.interfaces.DatabaseManaging
+import com.dmdev.fossilvaultanda.data.repository.interfaces.SubscriptionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: DatabaseManaging
+    private val repository: DatabaseManaging,
+    private val subscriptionManager: SubscriptionManager
 ) : ViewModel() {
     
     // Search and filter state
@@ -123,6 +125,16 @@ class HomeViewModel @Inject constructor(
     
     fun clearSearch() {
         _searchQuery.value = ""
+    }
+
+    suspend fun canAddSpecimen(): Boolean {
+        return try {
+            val currentCount = repository.getSpecimenCount()
+            subscriptionManager.canAddSpecimen(currentCount)
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "Error checking specimen limit: ${e.message}")
+            false
+        }
     }
     
     fun clearFilters() {

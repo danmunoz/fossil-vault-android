@@ -12,7 +12,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.authentication.domain.AuthenticationManager
@@ -31,6 +33,7 @@ fun HomeScreen(
     onNavigateToStats: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onAddSpecimen: () -> Unit = {},
+    onNavigateToLimitReached: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -39,6 +42,7 @@ fun HomeScreen(
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
     val sortOption by viewModel.sortOption.collectAsState()
     val displayMode by viewModel.displayMode.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -50,7 +54,15 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onAddSpecimen,
+                onClick = {
+                    coroutineScope.launch {
+                        if (viewModel.canAddSpecimen()) {
+                            onAddSpecimen()
+                        } else {
+                            onNavigateToLimitReached()
+                        }
+                    }
+                },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {

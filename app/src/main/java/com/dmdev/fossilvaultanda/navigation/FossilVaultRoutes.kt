@@ -46,6 +46,10 @@ sealed class FossilVaultRoute {
     @Serializable
     data object About : FossilVaultRoute()
 
+    // Subscription Flow
+    @Serializable
+    data object LimitReached : FossilVaultRoute()
+
     // Add Specimen Flow
     @Serializable
     data class AddSpecimen(val specimenId: String? = null) : FossilVaultRoute()

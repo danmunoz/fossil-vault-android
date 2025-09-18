@@ -3,9 +3,11 @@ package com.dmdev.fossilvaultanda.data.di
 import com.dmdev.fossilvaultanda.data.repository.impl.AuthenticationManagerAdapter
 import com.dmdev.fossilvaultanda.data.repository.impl.FirebaseStorageRepository
 import com.dmdev.fossilvaultanda.data.repository.impl.FirestoreDataRepository
+import com.dmdev.fossilvaultanda.data.repository.impl.MockSubscriptionManager
 import com.dmdev.fossilvaultanda.data.repository.interfaces.AuthenticationManager
 import com.dmdev.fossilvaultanda.data.repository.interfaces.DatabaseManaging
 import com.dmdev.fossilvaultanda.data.repository.interfaces.ImageStoring
+import com.dmdev.fossilvaultanda.data.repository.interfaces.SubscriptionManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthenticationManager(
         authenticationManagerAdapter: AuthenticationManagerAdapter
     ): AuthenticationManager
+
+    @Binds
+    @Singleton
+    abstract fun bindSubscriptionManager(
+        mockSubscriptionManager: MockSubscriptionManager
+    ): SubscriptionManager
 }
