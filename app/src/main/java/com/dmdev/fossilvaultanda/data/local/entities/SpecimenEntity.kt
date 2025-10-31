@@ -26,15 +26,21 @@ data class SpecimenEntity(
     @PrimaryKey val id: String,
     val userId: String,
     val species: String, // Legacy field for backward compatibility
-    // Taxonomy fields
+    // Taxonomy fields (13 fields matching iOS)
     val taxonomyKingdom: String? = null,
     val taxonomyPhylum: String? = null,
+    val taxonomySubPhylum: String? = null,
     val taxonomyClass: String? = null,
+    val taxonomySubClass: String? = null,
+    val taxonomySuperOrder: String? = null,
     val taxonomyOrder: String? = null,
+    val taxonomyInfraOrder: String? = null,
+    val taxonomySubOrder: String? = null,
+    val taxonomySuperFamily: String? = null,
     val taxonomyFamily: String? = null,
     val taxonomyGenus: String? = null,
+    val taxonomySubGenus: String? = null,
     val taxonomySpecies: String? = null,
-    val taxonomySubspecies: String? = null,
     val period: String, // Legacy field for backward compatibility
     val geologicalEra: String? = null,
     val geologicalPeriod: String? = null,
@@ -44,15 +50,18 @@ data class SpecimenEntity(
     
     // Location Information
     val location: String? = null,
+    val country: String? = null,
     val formation: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    
+
     // Physical Measurements
     val width: Double? = null,
     val height: Double? = null,
     val length: Double? = null,
     val unit: String = "MM",
+    val weight: Double? = null,
+    val weightUnit: String = "GR",
     
     // Dates (stored as ISO strings)
     val collectionDate: String? = null,
@@ -62,9 +71,13 @@ data class SpecimenEntity(
     // Additional Metadata
     val inventoryId: String? = null,
     val notes: String? = null,
-    
+    val storageRoom: String? = null,
+    val storageCabinet: String? = null,
+    val storageDrawer: String? = null,
+
     // Media (stored as JSON string)
     val imageUrls: String = "[]",
+    val shareUrl: String? = null,
     
     // Organization
     val isFavorite: Boolean = false,
@@ -80,7 +93,10 @@ data class SpecimenEntity(
     val pricePaidCurrency: String? = null,
     val estimatedValue: Double? = null,
     val estimatedValueCurrency: String? = null,
-    
+
+    // Disposition (stored as JSON string)
+    val dispositionJson: String? = null,
+
     // Sync metadata
     val lastModified: Long = System.currentTimeMillis(),
     val needsSync: Boolean = false
@@ -99,6 +115,7 @@ data class SpecimenEntity(
             geologicalTime = geologicalTimeObject,
             element = FossilElement.fromSerializedName(element),
             location = location,
+            country = country,
             formation = formation,
             latitude = latitude,
             longitude = longitude,
@@ -106,6 +123,8 @@ data class SpecimenEntity(
             height = height,
             length = length,
             unit = SizeUnit.fromSerializedName(unit),
+            weight = weight,
+            weightUnit = com.dmdev.fossilvaultanda.data.models.enums.WeightUnit.fromSerializedName(weightUnit),
             collectionDate = collectionDate?.let { Instant.parse(it) },
             acquisitionDate = acquisitionDate?.let { Instant.parse(it) },
             creationDate = Instant.parse(creationDate),
@@ -113,11 +132,19 @@ data class SpecimenEntity(
             condition = condition?.let { Condition.fromSerializedName(it) },
             inventoryId = inventoryId,
             notes = notes,
+            storage = if (storageRoom != null || storageCabinet != null || storageDrawer != null) {
+                com.dmdev.fossilvaultanda.data.models.StorageMethod(
+                    drawer = storageDrawer,
+                    cabinet = storageCabinet,
+                    room = storageRoom
+                )
+            } else null,
             imageUrls = try {
                 Json.decodeFromString<List<StoredImage>>(imageUrls)
             } catch (e: Exception) {
                 emptyList()
             },
+            shareUrl = shareUrl,
             isFavorite = isFavorite,
             tagNames = try {
                 Json.decodeFromString<List<String>>(tagNames)
@@ -128,7 +155,14 @@ data class SpecimenEntity(
             pricePaid = pricePaid,
             pricePaidCurrency = Currency.fromSerializedName(pricePaidCurrency),
             estimatedValue = estimatedValue,
-            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency)
+            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency),
+            disposition = dispositionJson?.let {
+                try {
+                    Json.decodeFromString<com.dmdev.fossilvaultanda.data.models.Disposition>(it)
+                } catch (e: Exception) {
+                    null
+                }
+            }
         )
     }
 
@@ -189,12 +223,18 @@ data class SpecimenEntity(
             return com.dmdev.fossilvaultanda.data.models.Taxonomy(
                 kingdom = taxonomyKingdom,
                 phylum = taxonomyPhylum,
+                subPhylum = taxonomySubPhylum,
                 taxonomicClass = taxonomyClass,
+                subClass = taxonomySubClass,
+                superOrder = taxonomySuperOrder,
                 order = taxonomyOrder,
+                infraOrder = taxonomyInfraOrder,
+                subOrder = taxonomySubOrder,
+                superFamily = taxonomySuperFamily,
                 family = taxonomyFamily,
                 genus = taxonomyGenus,
-                species = taxonomySpecies,
-                subspecies = taxonomySubspecies
+                subGenus = taxonomySubGenus,
+                species = taxonomySpecies
             )
         }
 
@@ -215,12 +255,18 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         species = "", // Legacy field left empty for new specimens
         taxonomyKingdom = taxonomy.kingdom,
         taxonomyPhylum = taxonomy.phylum,
+        taxonomySubPhylum = taxonomy.subPhylum,
         taxonomyClass = taxonomy.taxonomicClass,
+        taxonomySubClass = taxonomy.subClass,
+        taxonomySuperOrder = taxonomy.superOrder,
         taxonomyOrder = taxonomy.order,
+        taxonomyInfraOrder = taxonomy.infraOrder,
+        taxonomySubOrder = taxonomy.subOrder,
+        taxonomySuperFamily = taxonomy.superFamily,
         taxonomyFamily = taxonomy.family,
         taxonomyGenus = taxonomy.genus,
+        taxonomySubGenus = taxonomy.subGenus,
         taxonomySpecies = taxonomy.species,
-        taxonomySubspecies = taxonomy.subspecies,
         period = "", // Legacy field left empty for new specimens
         geologicalEra = geologicalTime.era?.name?.lowercase(),
         geologicalPeriod = geologicalTime.period?.name?.lowercase(),
@@ -228,6 +274,7 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         geologicalAge = geologicalTime.age?.name?.lowercase(),
         element = element.serializedName,
         location = location,
+        country = country,
         formation = formation,
         latitude = latitude,
         longitude = longitude,
@@ -235,6 +282,8 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         height = height,
         length = length,
         unit = unit.serializedName,
+        weight = weight,
+        weightUnit = weightUnit.serializedName,
         collectionDate = collectionDate?.toString(),
         acquisitionDate = acquisitionDate?.toString(),
         creationDate = creationDate.toString(),
@@ -242,7 +291,11 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         condition = condition?.serializedName,
         inventoryId = inventoryId,
         notes = notes,
+        storageRoom = storage?.room,
+        storageCabinet = storage?.cabinet,
+        storageDrawer = storage?.drawer,
         imageUrls = Json.encodeToString(imageUrls),
+        shareUrl = shareUrl,
         isFavorite = isFavorite,
         tagNames = Json.encodeToString(tagNames),
         isPublic = isPublic,
@@ -250,6 +303,7 @@ fun Specimen.toSpecimenEntity(): SpecimenEntity {
         pricePaidCurrency = pricePaidCurrency?.serializedName,
         estimatedValue = estimatedValue,
         estimatedValueCurrency = estimatedValueCurrency?.serializedName,
+        dispositionJson = disposition?.let { Json.encodeToString(it) },
         lastModified = System.currentTimeMillis(),
         needsSync = true
     )

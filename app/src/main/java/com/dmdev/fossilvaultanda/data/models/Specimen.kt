@@ -5,6 +5,7 @@ import com.dmdev.fossilvaultanda.data.models.enums.Condition
 import com.dmdev.fossilvaultanda.data.models.enums.Currency
 import com.dmdev.fossilvaultanda.data.models.enums.FossilElement
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.dmdev.fossilvaultanda.data.models.enums.WeightUnit
 import com.fossilVault.geological.GeologicalTime
 import kotlinx.serialization.Contextual
 import com.google.firebase.Timestamp
@@ -22,15 +23,18 @@ data class Specimen(
     
     // Location Information
     val location: String? = null,
+    val country: String? = null,
     val formation: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    
+
     // Physical Measurements
     val width: Double? = null,
     val height: Double? = null,
     val length: Double? = null,
     val unit: SizeUnit = SizeUnit.MM,
+    val weight: Double? = null,
+    val weightUnit: WeightUnit = WeightUnit.GR,
     
     // Dates
     val collectionDate: Instant? = null,
@@ -44,9 +48,11 @@ data class Specimen(
     // Additional Metadata
     val inventoryId: String? = null,
     val notes: String? = null,
-    
+    val storage: StorageMethod? = null,
+
     // Media
     val imageUrls: List<StoredImage> = emptyList(),
+    val shareUrl: String? = null,
     
     // Organization
     val isFavorite: Boolean = false,
@@ -57,8 +63,42 @@ data class Specimen(
     val pricePaid: Double? = null,
     val pricePaidCurrency: Currency? = null,
     val estimatedValue: Double? = null,
-    val estimatedValueCurrency: Currency? = null
+    val estimatedValueCurrency: Currency? = null,
+
+    // Disposition (tracking for sold/traded/gifted/lost specimens)
+    val disposition: Disposition? = null
 ) {
+    /**
+     * Returns a formatted string describing the dimensions (LxWxH unit)
+     * Returns null if no dimensions are set
+     * Matches iOS dimensionsDescription computed property
+     */
+    val dimensionsDescription: String?
+        get() {
+            if (!hasDimensions) return null
+
+            val dimensions = mutableListOf<String>()
+            length?.let { dimensions.add(it.toString()) }
+            width?.let { dimensions.add(it.toString()) }
+            height?.let { dimensions.add(it.toString()) }
+
+            return if (dimensions.isNotEmpty()) {
+                "${dimensions.joinToString("x")} ${unit.serializedName}"
+            } else null
+        }
+
+    /**
+     * Returns true if at least one dimension is set
+     */
+    private val hasDimensions: Boolean
+        get() = width != null || height != null || length != null
+
+    /**
+     * Returns true if the specimen has been archived (disposed of)
+     * Matches iOS isArchived computed property
+     */
+    val isArchived: Boolean
+        get() = disposition != null
     fun validate(): Result<Unit> {
         return when {
             id.isBlank() -> Result.failure(DataException.ValidationException("ID cannot be blank"))
@@ -74,6 +114,8 @@ data class Specimen(
                 Result.failure(DataException.ValidationException("Height cannot be negative"))
             length != null && length < 0 ->
                 Result.failure(DataException.ValidationException("Length cannot be negative"))
+            weight != null && weight < 0 ->
+                Result.failure(DataException.ValidationException("Weight cannot be negative"))
             pricePaid != null && pricePaid < 0 ->
                 Result.failure(DataException.ValidationException("Price paid cannot be negative"))
             estimatedValue != null && estimatedValue < 0 ->
@@ -90,21 +132,35 @@ data class Specimen(
     fun toCsvRow(): String {
         return csvEscape(
             listOf(
-                id, taxonomy.getDisplayName(), geologicalTime.period?.displayName ?: "Unknown", element.displayString,
-                location ?: "", formation ?: "",
-                latitude?.toString() ?: "", longitude?.toString() ?: "",
-                width?.toString() ?: "", height?.toString() ?: "",
-                length?.toString() ?: "", unit.name,
+                id,
+                taxonomy.getDisplayName(),
+                geologicalTime.period?.displayName ?: "Unknown",
+                element.displayString,
+                location ?: "",
+                country ?: "",
+                formation ?: "",
+                latitude?.toString() ?: "",
+                longitude?.toString() ?: "",
+                width?.toString() ?: "",
+                height?.toString() ?: "",
+                length?.toString() ?: "",
+                unit.serializedName,
+                weight?.toString() ?: "",
+                weightUnit.displayString,
                 collectionDate?.toString() ?: "",
                 acquisitionDate?.toString() ?: "",
                 acquisitionMethod?.displayString ?: "",
                 condition?.displayString ?: "",
-                inventoryId ?: "", notes ?: "",
+                inventoryId ?: "",
+                notes ?: "",
+                storage?.room ?: "",
+                storage?.cabinet ?: "",
+                storage?.drawer ?: "",
                 creationDate.toString(),
                 pricePaid?.toString() ?: "",
-                pricePaidCurrency?.name ?: "",
+                pricePaidCurrency?.serializedName ?: "",
                 estimatedValue?.toString() ?: "",
-                estimatedValueCurrency?.name ?: ""
+                estimatedValueCurrency?.serializedName ?: ""
             )
         ).joinToString(",")
     }
@@ -135,6 +191,7 @@ data class Specimen(
             ),
             "element" to element.serializedName,
             "location" to location,
+            "country" to country,
             "formation" to formation,
             "latitude" to latitude,
             "longitude" to longitude,
@@ -142,6 +199,8 @@ data class Specimen(
             "height" to height,
             "length" to length,
             "unit" to unit.serializedName,
+            "weight" to weight,
+            "weightUnit" to weightUnit.serializedName,
             "collectionDate" to collectionDate?.let {
                 com.google.firebase.Timestamp(it.epochSeconds, it.nanosecondsOfSecond)
             },
@@ -153,6 +212,7 @@ data class Specimen(
             "condition" to condition?.serializedName,
             "inventoryId" to inventoryId,
             "notes" to notes,
+            "storage" to storage?.toFirestoreMap(),
             "imageUrls" to imageUrls.map { image ->
                 val imageMap = mutableMapOf<String, Any>(
                     "url" to image.url,
@@ -162,20 +222,23 @@ data class Specimen(
                 image.format?.let { imageMap["format"] = it.value }
                 imageMap
             },
+            "shareUrl" to shareUrl,
             "isFavorite" to isFavorite,
             "tagNames" to tagNames,
             "isPublic" to isPublic,
             "pricePaid" to pricePaid,
             "pricePaidCurrency" to pricePaidCurrency?.serializedName,
             "estimatedValue" to estimatedValue,
-            "estimatedValueCurrency" to estimatedValueCurrency?.serializedName
+            "estimatedValueCurrency" to estimatedValueCurrency?.serializedName,
+            "disposition" to disposition?.toFirestoreMap()
         )
     }
     
     companion object {
-        const val CSV_HEADER = "Identifier,Species,Period,Element,Location,Formation," +
-                "Latitude,Longitude,Width,Height,Length,Unit,Collection Date," +
-                "Acquisition Date,Acquisition Method,Condition,Inventory ID,Notes,Creation Date,Price Paid," +
-                "Price Paid Currency,Estimated Value,Estimated Value Currency"
+        const val CSV_HEADER = "Identifier,Species,Period,Element,Location,Country,Formation," +
+                "Latitude,Longitude,Width,Height,Length,Unit,Weight,Weight Unit," +
+                "Collection Date,Acquisition Date,Acquisition Method,Condition,Inventory ID,Notes," +
+                "Storage Room,Storage Cabinet,Storage Drawer,Creation Date," +
+                "Price Paid,Price Paid Currency,Estimated Value,Estimated Value Currency"
     }
 }

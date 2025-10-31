@@ -22,36 +22,41 @@ data class FirestoreSpecimen(
     val period: String = "", // Legacy field for backward compatibility
     val geologicalTime: Map<String, String?>? = null, // New geological time structure
     val element: String = "",
-    
+
     // Location Information
     val location: String? = null,
+    val country: String? = null,
     val formation: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    
+
     // Physical Measurements
     val width: Double? = null,
     val height: Double? = null,
     val length: Double? = null,
     val unit: String = "mm",
-    
+    val weight: Double? = null,
+    val weightUnit: String = "gr",
+
     // Dates as Firestore Timestamps
     val collectionDate: Timestamp? = null,
     val acquisitionDate: Timestamp? = null,
     val creationDate: Timestamp? = null,
-    
+
     // Additional Metadata
     val inventoryId: String? = null,
     val notes: String? = null,
-    
+    val storage: Map<String, Any?>? = null,
+
     // Media as Maps
     val imageUrls: List<Map<String, Any>> = emptyList(),
-    
+    val shareUrl: String? = null,
+
     // Organization
     val isFavorite: Boolean = false,
     val tagNames: List<String> = emptyList(),
     val isPublic: Boolean = false,
-    
+
     // Acquisition Information
     val acquisitionMethod: String? = null,
     val condition: String? = null,
@@ -60,7 +65,10 @@ data class FirestoreSpecimen(
     val pricePaid: Double? = null,
     val pricePaidCurrency: String? = null,
     val estimatedValue: Double? = null,
-    val estimatedValueCurrency: String? = null
+    val estimatedValueCurrency: String? = null,
+
+    // Disposition
+    val disposition: Map<String, Any?>? = null
 ) {
     fun toSpecimen(): Specimen {
         // Parse geological time with backward compatibility
@@ -76,6 +84,7 @@ data class FirestoreSpecimen(
             geologicalTime = geologicalTimeObject,
             element = FossilElement.fromSerializedName(element),
             location = location,
+            country = country,
             formation = formation,
             latitude = latitude,
             longitude = longitude,
@@ -83,11 +92,13 @@ data class FirestoreSpecimen(
             height = height,
             length = length,
             unit = SizeUnit.fromSerializedName(unit),
-            collectionDate = collectionDate?.let { 
-                Instant.fromEpochSeconds(it.seconds, it.nanoseconds) 
+            weight = weight,
+            weightUnit = com.dmdev.fossilvaultanda.data.models.enums.WeightUnit.fromSerializedName(weightUnit),
+            collectionDate = collectionDate?.let {
+                Instant.fromEpochSeconds(it.seconds, it.nanoseconds)
             },
-            acquisitionDate = acquisitionDate?.let { 
-                Instant.fromEpochSeconds(it.seconds, it.nanoseconds) 
+            acquisitionDate = acquisitionDate?.let {
+                Instant.fromEpochSeconds(it.seconds, it.nanoseconds)
             },
             creationDate = creationDate?.let {
                 Instant.fromEpochSeconds(it.seconds, it.nanoseconds)
@@ -96,6 +107,7 @@ data class FirestoreSpecimen(
             condition = condition?.let { Condition.fromSerializedName(it) },
             inventoryId = inventoryId,
             notes = notes,
+            storage = StorageMethod.fromFirestoreMap(storage),
             imageUrls = imageUrls.mapNotNull { imageMap ->
                 val url = imageMap["url"] as? String
                 val path = imageMap["path"] as? String
@@ -112,13 +124,15 @@ data class FirestoreSpecimen(
                     )
                 } else null
             },
+            shareUrl = shareUrl,
             isFavorite = isFavorite,
             tagNames = tagNames,
             isPublic = isPublic,
             pricePaid = pricePaid,
             pricePaidCurrency = Currency.fromSerializedName(pricePaidCurrency),
             estimatedValue = estimatedValue,
-            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency)
+            estimatedValueCurrency = Currency.fromSerializedName(estimatedValueCurrency),
+            disposition = Disposition.fromFirestoreMap(disposition)
         )
     }
 
