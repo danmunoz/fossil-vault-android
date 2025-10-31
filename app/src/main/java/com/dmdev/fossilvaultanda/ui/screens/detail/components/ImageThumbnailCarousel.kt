@@ -72,6 +72,7 @@ fun ImageThumbnailCarousel(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(image.url)
+                        .size(60, 60)
                         .crossfade(true)
                         .build(),
                     contentDescription = "Thumbnail ${index + 1} of ${images.size}",
