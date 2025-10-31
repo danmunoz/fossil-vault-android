@@ -25,7 +25,7 @@ The iOS version features:
 
 - **Language**: Kotlin
 - **UI Framework**: Jetpack Compose with Material3
-- **Architecture**: MVVM (to be implemented)
+- **Architecture**: MVVM with Hilt (implemented)
 - **Backend**: Firebase (Firestore, Auth, Storage, Functions)
 - **Build System**: Gradle with Kotlin DSL
 - **Min SDK**: 26 (Android 8.0+)
@@ -52,7 +52,13 @@ app/
 │   │       ├── screens/                    # Feature screens
 │   │       │   ├── welcome/                # Welcome/onboarding
 │   │       │   ├── home/                   # Home screen with specimens
-│   │       │   └── detail/                 # Fossil detail view (in progress)
+│   │       │   ├── detail/                 # Fossil detail view with image gallery
+│   │       │   ├── specimen/               # Add/edit specimen forms
+│   │       │   ├── profile/                # User profile & account management
+│   │       │   ├── settings/               # App settings & preferences
+│   │       │   ├── stats/                  # Statistics & analytics dashboard
+│   │       │   ├── support/                # FAQ & about screens
+│   │       │   └── subscription/           # Subscription & usage limits
 │   │       └── theme/                      # Material3 design system
 │   │           ├── Color.kt                # Base colors
 │   │           ├── PeriodColors.kt         # Geological period colors
@@ -103,13 +109,15 @@ app/
 ## Architecture Guidelines
 
 ### Current State
-- **Architecture**: MVVM with Hilt dependency injection implemented
+- **Architecture**: MVVM with Hilt dependency injection fully implemented
 - **Authentication**: Complete Firebase Auth system with email/password signup/login
 - **Data Layer**: Repository pattern with Firestore and Room database integration
 - **Theme System**: Material3 with geological period color system and typography scale
-- **Core Screens**: Welcome screen, Home screen with specimen display, Detail screen (in progress)
-- **Navigation**: Jetpack Navigation Compose with authentication flow
-- **Firebase**: Firestore, Authentication, and Storage configured
+- **Core Screens**: All primary screens implemented (Welcome, Home, Detail, Add/Edit Specimen, Profile, Settings, Stats, Support)
+- **Navigation**: Jetpack Navigation Compose with complete app navigation flow
+- **Firebase**: Firestore, Authentication, and Storage fully configured and operational
+- **Image Management**: Multi-image gallery with full-screen viewer, zoom, and carousel navigation
+- **User Features**: Profile management, settings configuration, subscription limits, FAQ/support
 
 ### Implementation Approach
 The Android app should maintain feature parity with the iOS version while following Android design patterns:
@@ -133,15 +141,35 @@ The Android app should maintain feature parity with the iOS version while follow
    - Configuration complete with security rules
 
 4. **Core Features**:
-   - ✅ **Authentication**: Complete email/password system
-   - ✅ **Welcome Screen**: Onboarding with animated logo and features
-   - ✅ **Home Screen**: Specimen display with search/filter capabilities
-   - 🚧 **Detail Screen**: In progress - comprehensive specimen view
-   - ⏳ **Photo Management**: Multi-image gallery per specimen
-   - ⏳ **Location Picker**: Google Maps integration
-   - ⏳ **Export Functionality**: CSV, ZIP export
-   - ⏳ **Statistics Dashboard**: Analytics and insights
-   - ⏳ **Settings**: User preferences and app configuration
+   - ✅ **Authentication**: Complete email/password system with profile management
+   - ✅ **Welcome Screen**: Onboarding with animated logo and feature highlights
+   - ✅ **Home Screen**: Specimen grid/list display with search, filter, and empty states
+   - ✅ **Detail Screen**: Comprehensive specimen view with all information cards
+   - ✅ **Photo Management**: Multi-image gallery with full-screen viewer and zoom
+   - ✅ **Add/Edit Specimen**: Complete form with image picker, location, geological time, dimensions
+   - ✅ **Profile Management**: User profile editing, account management
+   - ✅ **Settings**: Currency preferences, size units, app configuration
+   - ✅ **Statistics Dashboard**: Analytics and collection insights
+   - ✅ **Support**: FAQ, About screens with app information
+   - 🚧 **Subscription/Limits**: Usage limits and upgrade prompts (in progress)
+   - ⏳ **Location Picker**: Google Maps integration for specimen discovery sites
+   - ⏳ **Export Functionality**: CSV, ZIP export of collection data
+
+## Recent Updates
+
+### Latest Features (v0.5 - Current)
+- **Enhanced Detail Screen**: Improved image viewer with zoomable images, full-screen carousel navigation, and thumbnail preview
+- **Refined Home UI**: Added comprehensive empty state views, improved navigation buttons, grid/list toggle
+- **Subscription System**: Base structure for usage limits with LimitReachedScreen
+- **Image Management**: ImageThumbnailCarousel with swipe navigation, FullScreenImageViewer with pinch-to-zoom
+- **UI Polish**: Improved specimen cards, better spacing and visual hierarchy across all screens
+
+### Component Highlights
+- **ImageThumbnailCarousel**: Horizontal scrollable image gallery with thumbnail indicators
+- **ZoomableImageView**: Pinch-to-zoom and pan support for specimen photos
+- **FullScreenImageViewer**: Modal full-screen image display with carousel navigation
+- **EmptyViews**: Context-aware empty states for no specimens, no search results, no favorites
+- **SpecimenCard**: Optimized card display with period colors, favorite badges, image previews
 
 ## Key Implementation Notes
 
@@ -163,12 +191,13 @@ The Android app should maintain feature parity with the iOS version while follow
 - **Storage**: Both Firestore (`FirestoreSpecimen.kt`) and Room (`SpecimenEntity.kt`) entities
 
 ### Navigation
-✅ **Navigation System**: Jetpack Navigation Compose implemented
+✅ **Navigation System**: Jetpack Navigation Compose fully implemented
 - **Authentication Flow**: Welcome → Login/Signup → Home
-- **Main Navigation**: Home screen with specimen grid/list toggle
-- **Detail Navigation**: Home → Detail screen (in progress)
-- 🚧 **Modal Navigation**: Detail screen as modal presentation
-- ⏳ **Bottom Navigation**: For main app sections (Home, Search, Settings, Profile)
+- **Main Navigation**: Bottom navigation bar with Home, Stats, Settings, Profile tabs
+- **Detail Navigation**: Home → Detail screen with full-screen image viewer
+- **Form Navigation**: Add/Edit Specimen with specialized picker screens (Period, Element, Location, Currency, Size Units)
+- **Settings Navigation**: Settings → Currency/Size Unit pickers, FAQ, About screens
+- **Profile Navigation**: Profile → Edit Profile screen with account management
 
 ### Testing Strategy
 - Unit tests for ViewModels and business logic
@@ -186,20 +215,29 @@ The Android app should maintain feature parity with the iOS version while follow
 
 ## Development Workflow
 
-### Completed (Phase 1-4)
-1. ✅ **Design System**: Colors, typography, spacing, Material3 integration
-2. ✅ **Data Models**: Complete specimen model with Firebase/Room integration
-3. ✅ **Core Screens**: Welcome, Authentication, Home screens with MVVM
-4. ✅ **Navigation**: Authentication flow and basic app navigation
+### Completed (Phase 1-7)
+1. ✅ **Design System**: Complete Material3 theme with geological period colors, typography, spacing
+2. ✅ **Data Models**: Full specimen model with Firebase/Room integration, 25+ fields
+3. ✅ **Authentication**: Email/password auth with profile management
+4. ✅ **Core Screens**: Welcome, Home (grid/list views, search, filter, empty states)
+5. ✅ **Detail Screen**: Comprehensive view with image gallery, full-screen viewer, all info cards
+6. ✅ **Add/Edit Specimen**: Complete form with image picker, specialized pickers (period, element, location, currency, size units)
+7. ✅ **User Management**: Profile screen, edit profile, settings (currency, units, preferences)
+8. ✅ **Statistics**: Stats dashboard with collection analytics
+9. ✅ **Support**: FAQ and About screens
 
-### In Progress (Phase 5)
-5. 🚧 **Detail Screen**: Comprehensive specimen view with image gallery
-   - Species classification, physical properties, location discovery
-   - Value/inventory tracking, image management
+### In Progress (Phase 8)
+10. 🚧 **Subscription & Monetization**: Usage limits, upgrade prompts, subscription management
+11. 🚧 **Advanced Image Features**: Image editing, annotation capabilities
+12. 🚧 **Dark Theme Refinement**: Polishing dark mode across all screens
 
-### Next Steps (Phase 6-7)
-6. ⏳ **Advanced Features**: Search refinement, export, analytics dashboard
-7. ⏳ **Testing & Polish**: Comprehensive testing, performance optimization, accessibility
+### Next Steps (Phase 9-10)
+13. ⏳ **Google Maps Integration**: Interactive map for specimen discovery locations
+14. ⏳ **Export Functionality**: CSV and ZIP export of collection data with images
+15. ⏳ **Advanced Search**: Multi-criteria search, saved searches, search history
+16. ⏳ **Testing & Quality**: Comprehensive unit/UI tests, performance optimization
+17. ⏳ **Accessibility**: Screen reader support, keyboard navigation, contrast improvements
+18. ⏳ **Release Preparation**: Play Store listing, release builds, beta testing
 
 ## Firebase Configuration
 ✅ **Firebase Setup Complete**: All core services configured and operational
@@ -209,6 +247,28 @@ The Android app should maintain feature parity with the iOS version while follow
 - ✅ **Configuration**: google-services.json integrated with build system
 - ✅ **Privacy Policy**: https://fossilvault.app/privacy/ integrated in AndroidManifest.xml
 - ⏳ **Functions**: Server-side logic for data processing and exports (future)
+
+## Feature Parity with iOS
+
+### Implemented Features
+- ✅ **Specimen Cataloging**: Complete 25+ field catalog system matching iOS functionality
+- ✅ **Photo Management**: Multi-image support with full-screen viewer and zoom
+- ✅ **Collection Organization**: Search, filter by geological period, grid/list views
+- ✅ **User Profile**: Account management and profile editing
+- ✅ **Settings**: Currency preferences (25 currencies), size units, app configuration
+- ✅ **Statistics**: Collection analytics and insights dashboard
+
+### Missing Features (vs iOS)
+- ⏳ **GPS Location Tracking**: Interactive maps for specimen discovery sites
+- ⏳ **Export Functionality**: CSV and ZIP export capabilities
+- ⏳ **Advanced Filtering**: Multi-criteria filters, saved searches
+- ⏳ **Subscription/Monetization**: Payment integration, premium features
+
+### Android-Specific Enhancements
+- Material3 design language with dynamic theming support
+- Adaptive layouts for tablets and foldables
+- Integration with Android's back gesture navigation
+- Support for Android share sheet and intents
 
 ## App Store & Distribution
 - **Privacy Policy**: Hosted at https://fossilvault.app/privacy/ for Google Play compliance
