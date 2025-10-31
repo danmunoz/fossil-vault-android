@@ -184,10 +184,10 @@ data class Specimen(
             "userId" to userId,
             "taxonomy" to taxonomy.toFirestoreMap(),
             "geologicalTime" to mapOf(
-                "era" to geologicalTime.era?.name?.lowercase(),
-                "period" to geologicalTime.period?.name?.lowercase(),
-                "epoch" to geologicalTime.epoch?.name?.lowercase(),
-                "age" to geologicalTime.age?.name?.lowercase()
+                "era" to geologicalTime.era?.serializedName,
+                "period" to geologicalTime.period?.serializedName,
+                "epoch" to geologicalTime.epoch?.serializedName,
+                "age" to geologicalTime.age?.serializedName
             ),
             "element" to element.serializedName,
             "location" to location,

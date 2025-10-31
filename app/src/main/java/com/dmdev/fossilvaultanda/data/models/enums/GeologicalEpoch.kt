@@ -74,7 +74,24 @@ enum class GeologicalEpoch(
     
     val timeRange: String
         get() = "$startMya - $endMya Mya"
-    
+
+    /**
+     * Serialized name in camelCase format for Firebase/iOS compatibility
+     * Converts SCREAMING_SNAKE_CASE to camelCase
+     * Example: LATE_CRETACEOUS -> lateCretaceous
+     */
+    val serializedName: String
+        get() {
+            val parts = name.split("_")
+            return parts.mapIndexed { index, part ->
+                if (index == 0) {
+                    part.lowercase()
+                } else {
+                    part.lowercase().replaceFirstChar { it.uppercase() }
+                }
+            }.joinToString("")
+        }
+
     val period: GeologicalPeriod
         get() = when (this) {
             HOLOCENE, PLEISTOCENE -> GeologicalPeriod.QUATERNARY
@@ -138,4 +155,19 @@ enum class GeologicalEpoch(
             MIAOLINGIAN -> listOf(GeologicalAge.GUZHANGIAN, GeologicalAge.DRUMIAN, GeologicalAge.WULIUAN)
             TERRENEUVIAN -> listOf(GeologicalAge.STAGE4, GeologicalAge.STAGE3, GeologicalAge.STAGE2, GeologicalAge.FORTUNIAN)
         }
+
+    companion object {
+        /**
+         * Deserializes from camelCase or snake_case format
+         * Supports both new camelCase format (iOS compatible) and legacy snake_case format
+         */
+        fun fromSerializedName(name: String?): GeologicalEpoch? {
+            if (name == null) return null
+            return entries.find {
+                it.serializedName.equals(name, ignoreCase = true) ||
+                it.name.equals(name, ignoreCase = true) ||
+                it.name.replace("_", "").equals(name, ignoreCase = true)
+            }
+        }
+    }
 }

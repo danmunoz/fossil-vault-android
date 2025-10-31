@@ -139,37 +139,13 @@ data class FirestoreSpecimen(
     private fun parseGeologicalTime(): GeologicalTime {
         // If new geologicalTime structure exists, use it
         geologicalTime?.let { gtMap ->
-            val era = gtMap["era"]?.let { eraName ->
-                try {
-                    GeologicalEra.valueOf(eraName.uppercase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
+            val era = GeologicalEra.fromSerializedName(gtMap["era"])
 
-            val geologicalPeriod = gtMap["period"]?.let { periodName ->
-                try {
-                    GeologicalPeriod.valueOf(periodName.uppercase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
+            val geologicalPeriod = GeologicalPeriod.fromSerializedName(gtMap["period"])
 
-            val epoch = gtMap["epoch"]?.let { epochName ->
-                try {
-                    GeologicalEpoch.valueOf(epochName.uppercase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
+            val epoch = GeologicalEpoch.fromSerializedName(gtMap["epoch"])
 
-            val age = gtMap["age"]?.let { ageName ->
-                try {
-                    GeologicalAge.valueOf(ageName.uppercase())
-                } catch (e: IllegalArgumentException) {
-                    null
-                }
-            }
+            val age = GeologicalAge.fromSerializedName(gtMap["age"])
 
             return GeologicalTime(
                 era = era,
