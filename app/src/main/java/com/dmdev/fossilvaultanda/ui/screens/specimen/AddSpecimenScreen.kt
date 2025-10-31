@@ -72,6 +72,7 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ValidatedNumeric
 import com.dmdev.fossilvaultanda.ui.screens.specimen.components.ValidatedTextField
 import com.dmdev.fossilvaultanda.ui.theme.Dimensions
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
+import com.dmdev.fossilvaultanda.util.CountryUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +84,7 @@ fun AddSpecimenScreen(
     onNavigateToSizeUnitPicker: () -> Unit,
     onNavigateToCurrencyPicker: (String) -> Unit, // "price" or "value"
     onNavigateToLocationPicker: () -> Unit,
+    onNavigateToCountryPicker: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AddSpecimenViewModel = hiltViewModel()
 ) {
@@ -176,9 +178,11 @@ fun AddSpecimenScreen(
                 geologicalTime = formState.geologicalTime,
                 element = formState.element,
                 customElement = formState.customElement,
+                formation = formState.formation,
                 onSpeciesChange = viewModel::updateSpecies,
                 onGeologicalTimeClick = onNavigateToAdvancedGeologicalTimePicker,
                 onElementClick = onNavigateToElementPicker,
+                onFormationChange = viewModel::updateFormation,
                 validationErrors = validationErrors,
                 userProfile = userProfile,
                 modifier = Modifier.fillMaxWidth()
@@ -191,7 +195,7 @@ fun AddSpecimenScreen(
             // Location & Date Section
             LocationSection(
                 location = formState.location,
-                formation = formState.formation,
+                country = formState.country,
                 latitude = formState.latitude,
                 longitude = formState.longitude,
                 collectionDate = formState.collectionDate,
@@ -199,7 +203,7 @@ fun AddSpecimenScreen(
                 acquisitionMethod = formState.acquisitionMethod,
                 condition = formState.condition,
                 onLocationChange = viewModel::updateLocation,
-                onFormationChange = viewModel::updateFormation,
+                onCountryPickerClick = onNavigateToCountryPicker,
                 onLocationPickerClick = onNavigateToLocationPicker,
                 onCollectionDateChange = viewModel::updateCollectionDate,
                 onAcquisitionDateChange = viewModel::updateAcquisitionDate,
@@ -218,8 +222,20 @@ fun AddSpecimenScreen(
                 height = formState.height,
                 length = formState.length,
                 unit = formState.unit,
+                weight = formState.weight,
+                weightUnit = formState.weightUnit,
                 onDimensionsChange = viewModel::updateDimensions,
                 onUnitClick = onNavigateToSizeUnitPicker,
+                onWeightChange = { viewModel.updateWeight(it, formState.weightUnit) },
+                onWeightUnitClick = {
+                    // Toggle between GR and KG
+                    val newUnit = if (formState.weightUnit == com.dmdev.fossilvaultanda.data.models.enums.WeightUnit.GR) {
+                        com.dmdev.fossilvaultanda.data.models.enums.WeightUnit.KG
+                    } else {
+                        com.dmdev.fossilvaultanda.data.models.enums.WeightUnit.GR
+                    }
+                    viewModel.updateWeightUnit(newUnit)
+                },
                 validationErrors = validationErrors,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -239,6 +255,19 @@ fun AddSpecimenScreen(
                 onPriceCurrencyClick = { onNavigateToCurrencyPicker("price") },
                 onValueCurrencyClick = { onNavigateToCurrencyPicker("value") },
                 validationErrors = validationErrors,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(Dimensions.large))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(Dimensions.large))
+
+            // Storage Section
+            StorageSection(
+                room = formState.storage?.room,
+                cabinet = formState.storage?.cabinet,
+                drawer = formState.storage?.drawer,
+                onStorageChange = viewModel::updateStorage,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -331,9 +360,11 @@ private fun BasicInformationSection(
     geologicalTime: GeologicalTime,
     element: FossilElement,
     customElement: String,
+    formation: String,
     onSpeciesChange: (String) -> Unit,
     onGeologicalTimeClick: () -> Unit,
     onElementClick: () -> Unit,
+    onFormationChange: (String) -> Unit,
     validationErrors: Map<String, String>,
     userProfile: com.dmdev.fossilvaultanda.data.models.UserProfile?,
     modifier: Modifier = Modifier
@@ -344,9 +375,10 @@ private fun BasicInformationSection(
             icon = Icons.Default.Info,
             iconColor = Color(0xFF4CAF50) // Green
         )
-        
+
         Spacer(modifier = Modifier.height(Dimensions.medium))
-        
+
+        // 1. Species
         ValidatedTextField(
             value = species,
             onValueChange = onSpeciesChange,
@@ -356,18 +388,10 @@ private fun BasicInformationSection(
             errorMessage = validationErrors["species"],
             imeAction = ImeAction.Next
         )
-        
+
         Spacer(modifier = Modifier.height(Dimensions.medium))
-        
-        GeologicalTimeSelectionField(
-            geologicalTime = geologicalTime,
-            onClick = onGeologicalTimeClick,
-            isRequired = true,
-            errorMessage = validationErrors["geologicalTime"]
-        )
-        
-        Spacer(modifier = Modifier.height(Dimensions.medium))
-        
+
+        // 2. Anatomical Element
         SelectionField(
             value = if (element != FossilElement.OTHER) element.displayString else customElement,
             label = "Anatomical Element",
@@ -376,13 +400,34 @@ private fun BasicInformationSection(
             errorMessage = validationErrors["element"],
             onClick = onElementClick
         )
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        // 3. Geological Time
+        GeologicalTimeSelectionField(
+            geologicalTime = geologicalTime,
+            onClick = onGeologicalTimeClick,
+            isRequired = true,
+            errorMessage = validationErrors["geologicalTime"]
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        // 4. Formation
+        ValidatedTextField(
+            value = formation,
+            onValueChange = onFormationChange,
+            label = "Geological Formation",
+            placeholder = "e.g., Morrison Formation",
+            imeAction = ImeAction.Next
+        )
     }
 }
 
 @Composable
 private fun LocationSection(
     location: String,
-    formation: String,
+    country: String?,
     latitude: Double?,
     longitude: Double?,
     collectionDate: kotlinx.datetime.Instant?,
@@ -390,7 +435,7 @@ private fun LocationSection(
     acquisitionMethod: AcquisitionMethod?,
     condition: Condition?,
     onLocationChange: (String) -> Unit,
-    onFormationChange: (String) -> Unit,
+    onCountryPickerClick: () -> Unit,
     onLocationPickerClick: () -> Unit,
     onCollectionDateChange: (kotlinx.datetime.Instant?) -> Unit,
     onAcquisitionDateChange: (kotlinx.datetime.Instant?) -> Unit,
@@ -414,17 +459,20 @@ private fun LocationSection(
             placeholder = "e.g., Hell Creek Formation, Montana",
             imeAction = ImeAction.Next
         )
-        
+
         Spacer(modifier = Modifier.height(Dimensions.medium))
-        
-        ValidatedTextField(
-            value = formation,
-            onValueChange = onFormationChange,
-            label = "Geological Formation",
-            placeholder = "e.g., Morrison Formation",
-            imeAction = ImeAction.Next
+
+        // Country Picker
+        SelectionField(
+            value = country?.let { countryCode ->
+                "${CountryUtils.getFlagEmoji(countryCode)} ${CountryUtils.getLocalizedCountryName(countryCode)}"
+            } ?: "",
+            label = "Country",
+            placeholder = "Select country",
+            isRequired = false,
+            onClick = onCountryPickerClick
         )
-        
+
         Spacer(modifier = Modifier.height(Dimensions.medium))
         
         // GPS Coordinates (simplified - would show actual coordinates if set)
@@ -498,8 +546,12 @@ private fun DimensionsSection(
     height: Double?,
     length: Double?,
     unit: SizeUnit,
+    weight: Double?,
+    weightUnit: com.dmdev.fossilvaultanda.data.models.enums.WeightUnit,
     onDimensionsChange: (Double?, Double?, Double?) -> Unit,
     onUnitClick: () -> Unit,
+    onWeightChange: (Double?) -> Unit,
+    onWeightUnitClick: () -> Unit,
     validationErrors: Map<String, String>,
     modifier: Modifier = Modifier
 ) {
@@ -526,12 +578,36 @@ private fun DimensionsSection(
         )
         
         Spacer(modifier = Modifier.height(Dimensions.medium))
-        
+
         FilledTonalButton(
             onClick = onUnitClick,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Unit: ${unit.displayName}")
+        }
+
+        Spacer(modifier = Modifier.height(Dimensions.large))
+
+        // Weight Section
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            ValidatedNumericField(
+                value = weight,
+                onValueChange = onWeightChange,
+                label = "Weight",
+                modifier = Modifier.weight(1f),
+                errorMessage = validationErrors["weight"]
+            )
+
+            FilledTonalButton(
+                onClick = onWeightUnitClick,
+                modifier = Modifier.width(100.dp)
+            ) {
+                Text(weightUnit.displayString)
+            }
         }
     }
 }
@@ -607,6 +683,53 @@ private fun ValueSection(
 }
 
 @Composable
+private fun StorageSection(
+    room: String?,
+    cabinet: String?,
+    drawer: String?,
+    onStorageChange: (String?, String?, String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        SectionHeader(
+            title = "Storage",
+            icon = Icons.Default.LocationOn, // Using LocationOn as a placeholder for storage location
+            iconColor = Color(0xFF607D8B) // Gray
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        ValidatedTextField(
+            value = room ?: "",
+            onValueChange = { onStorageChange(it, cabinet, drawer) },
+            label = "Room",
+            placeholder = "e.g., Room 3",
+            imeAction = ImeAction.Next
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        ValidatedTextField(
+            value = cabinet ?: "",
+            onValueChange = { onStorageChange(room, it, drawer) },
+            label = "Cabinet",
+            placeholder = "e.g., Cabinet A",
+            imeAction = ImeAction.Next
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.medium))
+
+        ValidatedTextField(
+            value = drawer ?: "",
+            onValueChange = { onStorageChange(room, cabinet, it) },
+            label = "Drawer",
+            placeholder = "e.g., Drawer 12",
+            imeAction = ImeAction.Next
+        )
+    }
+}
+
+@Composable
 private fun AdditionalDetailsSection(
     inventoryId: String,
     notes: String,
@@ -674,7 +797,8 @@ fun AddSpecimenScreenPreview() {
             onNavigateToElementPicker = { },
             onNavigateToSizeUnitPicker = { },
             onNavigateToCurrencyPicker = { },
-            onNavigateToLocationPicker = { }
+            onNavigateToLocationPicker = { },
+            onNavigateToCountryPicker = { }
         )
     }
 }

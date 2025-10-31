@@ -68,10 +68,13 @@ sealed class FossilVaultRoute {
     
     @Serializable
     data object LocationPicker : FossilVaultRoute()
-    
+
+    @Serializable
+    data object CountryPicker : FossilVaultRoute()
+
     @Serializable
     data class SimpleCurrencyPicker(val context: String) : FossilVaultRoute()
-    
+
     @Serializable
     data object SimpleSizeUnitPicker : FossilVaultRoute()
 }

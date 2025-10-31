@@ -26,6 +26,7 @@ import com.dmdev.fossilvaultanda.ui.screens.settings.SizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.AddSpecimenViewModel
 import com.dmdev.fossilvaultanda.ui.screens.specimen.AdvancedGeologicalTimePickerScreen
+import com.dmdev.fossilvaultanda.ui.screens.specimen.CountryPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.ElementPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.LocationPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
@@ -107,6 +108,9 @@ fun FossilVaultNavigation(
                 },
                 onAddSpecimen = {
                     navController.navigate(FossilVaultRoute.AddSpecimen())
+                },
+                onEditSpecimen = { specimenId ->
+                    navController.navigate(FossilVaultRoute.AddSpecimen(specimenId))
                 },
                 onNavigateToLimitReached = {
                     navController.navigate(FossilVaultRoute.LimitReached)
@@ -274,6 +278,9 @@ fun FossilVaultNavigation(
                 onNavigateToLocationPicker = {
                     navController.navigate(FossilVaultRoute.LocationPicker)
                 },
+                onNavigateToCountryPicker = {
+                    navController.navigate(FossilVaultRoute.CountryPicker)
+                },
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize()
             )
@@ -357,7 +364,29 @@ fun FossilVaultNavigation(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
+        composable<FossilVaultRoute.CountryPicker> {
+            val parentEntry = remember(navController) {
+                navController.currentBackStack.value.first { entry ->
+                    entry.destination.route?.contains("AddSpecimen") == true
+                }
+            }
+            val addSpecimenViewModel: AddSpecimenViewModel = hiltViewModel(parentEntry)
+            val formState = addSpecimenViewModel.formState.collectAsState().value
+
+            CountryPickerScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onCountrySelected = { countryCode ->
+                    addSpecimenViewModel.updateCountry(countryCode)
+                    navController.navigateUp()
+                },
+                selectedCountry = formState.country,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         composable<FossilVaultRoute.SimpleCurrencyPicker> { backStackEntry ->
             val route = backStackEntry.toRoute<FossilVaultRoute.SimpleCurrencyPicker>()
             SimpleCurrencyPickerScreen(

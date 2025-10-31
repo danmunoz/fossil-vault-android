@@ -5,14 +5,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +43,7 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToStats: () -> Unit = {},
     onAddSpecimen: () -> Unit = {},
+    onEditSpecimen: (String) -> Unit = {},
     onNavigateToLimitReached: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
@@ -45,6 +56,10 @@ fun HomeScreen(
     val hasAnySpecimens by viewModel.hasAnySpecimens.collectAsState()
     val isFiltered by viewModel.isFiltered.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+
+    // State for dropdown menu and delete confirmation
+    var menuExpandedSpecimenId by remember { mutableStateOf<String?>(null) }
+    var specimenToDelete by remember { mutableStateOf<String?>(null) }
     
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -103,7 +118,7 @@ fun HomeScreen(
                     specimens = filteredSpecimens,
                     onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
                     onSpecimenAction = { specimen ->
-                        // TODO: Show bottom sheet or context menu
+                        menuExpandedSpecimenId = specimen.id
                     },
                     headerContent = headerContent,
                     hasAnySpecimens = hasAnySpecimens,
@@ -120,7 +135,7 @@ fun HomeScreen(
                     specimens = filteredSpecimens,
                     onSpecimenClick = { specimen -> onNavigateToSpecimen(specimen.id) },
                     onSpecimenAction = { specimen ->
-                        // TODO: Show bottom sheet or context menu
+                        menuExpandedSpecimenId = specimen.id
                     },
                     headerContent = headerContent,
                     hasAnySpecimens = hasAnySpecimens,
@@ -133,6 +148,81 @@ fun HomeScreen(
                 )
             }
         }
+    }
+
+    // Dropdown menu for specimen actions
+    if (menuExpandedSpecimenId != null) {
+        SpecimenActionMenu(
+            expanded = true,
+            onDismiss = { menuExpandedSpecimenId = null },
+            onEditClick = {
+                onEditSpecimen(menuExpandedSpecimenId!!)
+                menuExpandedSpecimenId = null
+            },
+            onDeleteClick = {
+                specimenToDelete = menuExpandedSpecimenId
+                menuExpandedSpecimenId = null
+            }
+        )
+    }
+
+    // Delete confirmation dialog
+    if (specimenToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { specimenToDelete = null },
+            title = { Text("Delete Specimen") },
+            text = { Text("Delete this specimen? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteSpecimen(specimenToDelete!!)
+                        specimenToDelete = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { specimenToDelete = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun SpecimenActionMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss
+    ) {
+        DropdownMenuItem(
+            text = { Text("Edit specimen") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = null
+                )
+            },
+            onClick = onEditClick
+        )
+
+        DropdownMenuItem(
+            text = { Text("Delete specimen") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = null
+                )
+            },
+            onClick = onDeleteClick
+        )
     }
 }
 

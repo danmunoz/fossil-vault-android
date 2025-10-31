@@ -3,6 +3,7 @@ package com.dmdev.fossilvaultanda.ui.screens.specimen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dmdev.fossilvaultanda.data.models.Specimen
+import com.dmdev.fossilvaultanda.data.models.StorageMethod
 import com.dmdev.fossilvaultanda.data.models.StoredImage
 import com.dmdev.fossilvaultanda.data.models.Taxonomy
 import com.dmdev.fossilvaultanda.data.models.UserProfile
@@ -14,6 +15,7 @@ import com.dmdev.fossilvaultanda.data.models.enums.Period
 import com.dmdev.fossilvaultanda.data.models.PeriodToGeologicalTimeMapper
 import com.fossilVault.geological.GeologicalTime
 import com.dmdev.fossilvaultanda.data.models.enums.SizeUnit
+import com.dmdev.fossilvaultanda.data.models.enums.WeightUnit
 import com.dmdev.fossilvaultanda.data.repository.interfaces.DatabaseManaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -109,6 +111,10 @@ class AddSpecimenViewModel @Inject constructor(
         _formState.value = _formState.value.copy(location = location)
     }
 
+    fun updateCountry(country: String?) {
+        _formState.value = _formState.value.copy(country = country)
+    }
+
     fun updateFormation(formation: String) {
         _formState.value = _formState.value.copy(formation = formation)
     }
@@ -138,6 +144,18 @@ class AddSpecimenViewModel @Inject constructor(
 
     fun updateSizeUnit(unit: SizeUnit) {
         _formState.value = _formState.value.copy(unit = unit)
+    }
+
+    fun updateWeight(weight: Double?, weightUnit: WeightUnit) {
+        _formState.value = _formState.value.copy(
+            weight = weight,
+            weightUnit = weightUnit
+        )
+        clearValidationError("weight")
+    }
+
+    fun updateWeightUnit(unit: WeightUnit) {
+        _formState.value = _formState.value.copy(weightUnit = unit)
     }
 
     fun updateCollectionDate(date: Instant?) {
@@ -176,6 +194,19 @@ class AddSpecimenViewModel @Inject constructor(
 
     fun updateNotes(notes: String) {
         _formState.value = _formState.value.copy(notes = notes)
+    }
+
+    fun updateStorage(room: String?, cabinet: String?, drawer: String?) {
+        val storage = if (room.isNullOrBlank() && cabinet.isNullOrBlank() && drawer.isNullOrBlank()) {
+            null
+        } else {
+            StorageMethod(
+                room = room?.takeIf { it.isNotBlank() },
+                cabinet = cabinet?.takeIf { it.isNotBlank() },
+                drawer = drawer?.takeIf { it.isNotBlank() }
+            )
+        }
+        _formState.value = _formState.value.copy(storage = storage)
     }
 
     fun updateTags(tags: List<String>) {
@@ -285,6 +316,7 @@ class AddSpecimenViewModel @Inject constructor(
         state.width?.let { if (it < 0) errors["width"] = "Width cannot be negative" }
         state.height?.let { if (it < 0) errors["height"] = "Height cannot be negative" }
         state.length?.let { if (it < 0) errors["length"] = "Length cannot be negative" }
+        state.weight?.let { if (it < 0) errors["weight"] = "Weight cannot be negative" }
 
         // Validate prices
         state.pricePaid?.let { if (it < 0) errors["pricePaid"] = "Price cannot be negative" }
@@ -308,6 +340,7 @@ class AddSpecimenViewModel @Inject constructor(
                 state.element
             },
             location = state.location.takeIf { it.isNotBlank() },
+            country = state.country,
             formation = state.formation.takeIf { it.isNotBlank() },
             latitude = state.latitude,
             longitude = state.longitude,
@@ -315,12 +348,15 @@ class AddSpecimenViewModel @Inject constructor(
             height = state.height,
             length = state.length,
             unit = state.unit,
+            weight = state.weight,
+            weightUnit = state.weightUnit,
             collectionDate = state.collectionDate,
             acquisitionDate = state.acquisitionDate,
             acquisitionMethod = state.acquisitionMethod,
             condition = state.condition,
             inventoryId = state.inventoryId.takeIf { it.isNotBlank() },
             notes = state.notes.takeIf { it.isNotBlank() },
+            storage = state.storage,
             imageUrls = state.imageUrls,
             isFavorite = state.isFavorite,
             tagNames = state.tagNames,
@@ -353,9 +389,10 @@ data class SpecimenFormState(
     val geologicalTime: GeologicalTime = GeologicalTime(),
     val element: FossilElement = FossilElement.OTHER,
     val customElement: String = "", // For "Other" element type
-    
+
     // Location Information
     val location: String = "",
+    val country: String? = null,
     val formation: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,
@@ -365,7 +402,9 @@ data class SpecimenFormState(
     val height: Double? = null,
     val length: Double? = null,
     val unit: SizeUnit = SizeUnit.MM,
-    
+    val weight: Double? = null,
+    val weightUnit: WeightUnit = WeightUnit.GR,
+
     // Dates
     val collectionDate: Instant? = null,
     val acquisitionDate: Instant? = null,
@@ -383,8 +422,9 @@ data class SpecimenFormState(
     // Additional Metadata
     val inventoryId: String = "",
     val notes: String = "",
+    val storage: StorageMethod? = null,
     val tagNames: List<String> = emptyList(),
-    
+
     // Media and Organization
     val imageUrls: List<StoredImage> = emptyList(),
     val isFavorite: Boolean = false,
@@ -398,6 +438,7 @@ data class SpecimenFormState(
                 element = specimen.element,
                 customElement = "", // Would need custom element handling
                 location = specimen.location ?: "",
+                country = specimen.country,
                 formation = specimen.formation ?: "",
                 latitude = specimen.latitude,
                 longitude = specimen.longitude,
@@ -405,6 +446,8 @@ data class SpecimenFormState(
                 height = specimen.height,
                 length = specimen.length,
                 unit = specimen.unit,
+                weight = specimen.weight,
+                weightUnit = specimen.weightUnit,
                 collectionDate = specimen.collectionDate,
                 acquisitionDate = specimen.acquisitionDate,
                 acquisitionMethod = specimen.acquisitionMethod,
@@ -415,6 +458,7 @@ data class SpecimenFormState(
                 estimatedValueCurrency = specimen.estimatedValueCurrency,
                 inventoryId = specimen.inventoryId ?: "",
                 notes = specimen.notes ?: "",
+                storage = specimen.storage,
                 tagNames = specimen.tagNames,
                 imageUrls = specimen.imageUrls,
                 isFavorite = specimen.isFavorite,

@@ -165,4 +165,16 @@ class HomeViewModel @Inject constructor(
         _searchQuery.value = ""
         _selectedPeriod.value = null
     }
+
+    fun deleteSpecimen(specimenId: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("HomeViewModel", "Deleting specimen: $specimenId")
+                repository.deleteSpecimen(specimenId)
+                Log.d("HomeViewModel", "Specimen deleted successfully: $specimenId")
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error deleting specimen: ${e.message}", e)
+            }
+        }
+    }
 }
