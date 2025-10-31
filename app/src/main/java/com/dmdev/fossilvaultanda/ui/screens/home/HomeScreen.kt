@@ -162,8 +162,15 @@ fun HomeScreen(
                 menuExpandedSpecimenId = null
             },
             onDuplicateClick = {
-                onDuplicateSpecimen(menuExpandedSpecimenId!!)
+                val specimenId = menuExpandedSpecimenId!!
                 menuExpandedSpecimenId = null
+                coroutineScope.launch {
+                    if (viewModel.canAddSpecimen()) {
+                        onDuplicateSpecimen(specimenId)
+                    } else {
+                        onNavigateToLimitReached()
+                    }
+                }
             },
             onDeleteClick = {
                 specimenToDelete = menuExpandedSpecimenId
