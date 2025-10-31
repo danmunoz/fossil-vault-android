@@ -39,12 +39,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.AcquisitionCard
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.ArchiveBanner
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.DispositionCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.FullScreenImageViewer
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.ImageGallery
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.InventoryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.LocationDiscoveryCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.PhysicalPropertiesCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.SpeciesClassificationCard
+import com.dmdev.fossilvaultanda.ui.screens.detail.components.StorageCard
 import com.dmdev.fossilvaultanda.ui.screens.detail.components.ValueCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -229,7 +232,14 @@ private fun PhoneFossilDetailContent(
                 onImageIndexChange = { viewModel.setCurrentImageIndex(it) }
             )
         }
-        
+
+        // Archive banner (if specimen is archived)
+        if (specimen.isArchived) {
+            item {
+                ArchiveBanner(specimen = specimen)
+            }
+        }
+
         // Species & classification card
         item {
             SpeciesClassificationCard(
@@ -239,14 +249,7 @@ private fun PhoneFossilDetailContent(
             )
         }
 
-        // Acquisition information card (conditional)
-        if (uiState.hasAcquisitionData) {
-            item {
-                AcquisitionCard(specimen = specimen)
-            }
-        }
-
-        // Location & discovery card (conditional)
+        // Location & discovery card (conditional) - moved before Acquisition
         if (uiState.hasLocationData) {
             item {
                 LocationDiscoveryCard(
@@ -261,14 +264,21 @@ private fun PhoneFossilDetailContent(
                 )
             }
         }
-        
+
+        // Acquisition information card (conditional) - moved after Location
+        if (uiState.hasAcquisitionData) {
+            item {
+                AcquisitionCard(specimen = specimen)
+            }
+        }
+
         // Physical properties card (conditional)
         if (uiState.hasPhysicalData) {
             item {
                 PhysicalPropertiesCard(specimen = specimen)
             }
         }
-        
+
         // Value card (conditional)
         if (uiState.hasValueData) {
             item {
@@ -276,9 +286,23 @@ private fun PhoneFossilDetailContent(
             }
         }
 
+        // Storage card (conditional)
+        if (uiState.hasStorageData) {
+            item {
+                StorageCard(specimen = specimen)
+            }
+        }
+
         // Inventory card (always show as it includes creation date)
         item {
             InventoryCard(specimen = specimen)
+        }
+
+        // Disposition card (if specimen is archived)
+        if (specimen.isArchived) {
+            item {
+                DispositionCard(specimen = specimen)
+            }
         }
     }
 }
@@ -305,7 +329,14 @@ private fun TabletFossilDetailContent(
                 onImageIndexChange = { viewModel.setCurrentImageIndex(it) }
             )
         }
-        
+
+        // Archive banner (if specimen is archived)
+        if (specimen.isArchived) {
+            item {
+                ArchiveBanner(specimen = specimen)
+            }
+        }
+
         item {
             SpeciesClassificationCard(
                 specimen = specimen,
@@ -314,12 +345,7 @@ private fun TabletFossilDetailContent(
             )
         }
 
-        if (uiState.hasAcquisitionData) {
-            item {
-                AcquisitionCard(specimen = specimen)
-            }
-        }
-
+        // Location card before Acquisition
         if (uiState.hasLocationData) {
             item {
                 LocationDiscoveryCard(
@@ -334,21 +360,42 @@ private fun TabletFossilDetailContent(
                 )
             }
         }
-        
+
+        // Acquisition card after Location
+        if (uiState.hasAcquisitionData) {
+            item {
+                AcquisitionCard(specimen = specimen)
+            }
+        }
+
         if (uiState.hasPhysicalData) {
             item {
                 PhysicalPropertiesCard(specimen = specimen)
             }
         }
-        
+
         if (uiState.hasValueData) {
             item {
                 ValueCard(specimen = specimen)
             }
         }
 
+        // Storage card
+        if (uiState.hasStorageData) {
+            item {
+                StorageCard(specimen = specimen)
+            }
+        }
+
         item {
             InventoryCard(specimen = specimen)
+        }
+
+        // Disposition card (if specimen is archived)
+        if (specimen.isArchived) {
+            item {
+                DispositionCard(specimen = specimen)
+            }
         }
     }
 }

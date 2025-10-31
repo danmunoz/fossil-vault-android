@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -120,6 +121,15 @@ fun PhysicalPropertiesCard(
                     value = height,
                     unit = specimen.unit.symbol,
                     icon = Icons.Default.SwapVert
+                )
+            }
+
+            specimen.weight?.let { weight ->
+                DimensionListItem(
+                    label = "Weight",
+                    value = weight,
+                    unit = specimen.weightUnit.displayString,
+                    icon = Icons.Default.FitnessCenter
                 )
             }
         }

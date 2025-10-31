@@ -13,18 +13,17 @@ data class FossilDetailUiState(
     val savedScrollPosition: Int = 0
 ) {
     val hasLocationData: Boolean
-        get() = specimen?.let { 
-            !it.location.isNullOrBlank() || 
-            !it.formation.isNullOrBlank() || 
-            it.latitude != null || 
-            it.longitude != null ||
-            it.collectionDate != null ||
-            it.acquisitionDate != null
+        get() = specimen?.let {
+            !it.location.isNullOrBlank() ||
+            !it.country.isNullOrBlank() ||
+            !it.formation.isNullOrBlank() ||
+            it.latitude != null ||
+            it.longitude != null
         } ?: false
     
     val hasPhysicalData: Boolean
         get() = specimen?.let {
-            it.width != null || it.height != null || it.length != null
+            it.width != null || it.height != null || it.length != null || it.weight != null
         } ?: false
     
     val hasValueData: Boolean
@@ -38,10 +37,17 @@ data class FossilDetailUiState(
     val hasAcquisitionData: Boolean
         get() = specimen?.let {
             it.acquisitionMethod != null ||
-            it.condition != null ||
+            it.collectionDate != null ||
             it.acquisitionDate != null
         } ?: false
-    
+
+    val hasStorageData: Boolean
+        get() = specimen?.let {
+            it.storage != null && !it.storage?.drawer.isNullOrBlank() ||
+            !it.storage?.cabinet.isNullOrBlank() ||
+            !it.storage?.room.isNullOrBlank()
+        } ?: false
+
     val hasCoordinates: Boolean
         get() = specimen?.let {
             it.latitude != null && it.longitude != null

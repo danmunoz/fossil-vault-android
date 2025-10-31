@@ -31,7 +31,8 @@ fun LocationDiscoveryCard(
     onMapClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    
+    val context = LocalContext.current
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -64,64 +65,53 @@ fun LocationDiscoveryCard(
             
             HorizontalDivider()
             
-            // Location information
-            specimen.location?.let { location ->
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            text = location,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    supportingContent = { 
-                        Text(
-                            text = "Found at",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            Icons.Default.Place, 
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    modifier = Modifier.semantics {
-                        contentDescription = "Location: $location"
+            // Location information (with country if available)
+            if (specimen.location != null || specimen.country != null) {
+                val countryDisplayText = specimen.country?.let { countryCode ->
+                    "${getLocalizedCountryName(context, countryCode)} ${getCountryFlag(countryCode)}"
+                }
+
+                val displayValue = buildString {
+                    specimen.location?.let { location ->
+                        if (location.isNotBlank()) {
+                            append(location)
+                        }
                     }
-                )
-            }
-            
-            // Formation information
-            specimen.formation?.let { formation ->
-                ListItem(
-                    headlineContent = { 
-                        Text(
-                            text = formation,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    supportingContent = { 
-                        Text(
-                            text = "Formation",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            Icons.Default.Map, 
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                    },
-                    modifier = Modifier.semantics {
-                        contentDescription = "Formation: $formation"
+                    countryDisplayText?.let { countryText ->
+                        if (this.isNotEmpty()) append(", ")
+                        append(countryText)
                     }
-                )
+                }
+
+                if (displayValue.isNotBlank()) {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = displayValue,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = "Found at",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.Place,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Location: $displayValue"
+                        }
+                    )
+                }
             }
-            
+
             // Coordinates with map integration
             if (specimen.latitude != null && specimen.longitude != null) {
                 val coordinatesText = "${String.format("%.6f", specimen.latitude)}, ${String.format("%.6f", specimen.longitude)}"
@@ -161,7 +151,31 @@ fun LocationDiscoveryCard(
                     }
                 )
             }
-            
+
         }
     }
+}
+
+/**
+ * Returns the localized country name for a given ISO country code
+ */
+private fun getLocalizedCountryName(context: android.content.Context, countryCode: String): String {
+    val locale = java.util.Locale.getDefault()
+    val displayCountry = java.util.Locale("", countryCode).getDisplayCountry(locale)
+    return displayCountry.ifEmpty { countryCode }
+}
+
+/**
+ * Returns the flag emoji for a given ISO country code
+ * Converts country code to regional indicator symbols
+ */
+private fun getCountryFlag(countryCode: String): String {
+    if (countryCode.length != 2) return ""
+
+    val base = 0x1F1E6 // Regional indicator symbol letter A
+    val firstChar = Character.codePointAt(countryCode.uppercase(), 0)
+    val secondChar = Character.codePointAt(countryCode.uppercase(), 1)
+
+    return String(Character.toChars(base + firstChar - 'A'.code)) +
+           String(Character.toChars(base + secondChar - 'A'.code))
 }

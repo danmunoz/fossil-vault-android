@@ -140,7 +140,31 @@ fun SpeciesClassificationCard(
                 geologicalTime = specimen.geologicalTime,
                 onPeriodClick = onPeriodClick
             )
-            
+
+            // Formation (if available)
+            if (!specimen.formation.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Column {
+                    Text(
+                        text = "Formation",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = specimen.formation!!,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .semantics {
+                                contentDescription = "Formation: ${specimen.formation}"
+                            }
+                    )
+                }
+            }
+
             // Tags section (only show if tags exist)
             if (specimen.tagNames.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))

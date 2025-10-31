@@ -21,6 +21,18 @@ The iOS version features:
 - Statistics and analytics dashboard
 - Currently free with potential future monetization strategies
 
+## iOS Counterpart Project
+
+**Location**: `/Users/danielmunoz/Repos/fossil-collector`
+
+This is the production iOS version of FossilVault, built with SwiftUI. When working on the Android version:
+- Reference iOS implementations for feature parity and design consistency
+- Compare data models, UI patterns, and business logic between platforms
+- Use iOS code as the source of truth for app behavior and features
+- Files from the iOS project can be referenced using the "@" command
+
+**Permission Note**: Claude Code has permission to read all files from the iOS project at `/Users/danielmunoz/Repos/fossil-collector` to facilitate cross-platform development and ensure feature parity.
+
 ## Technology Stack
 
 - **Language**: Kotlin
