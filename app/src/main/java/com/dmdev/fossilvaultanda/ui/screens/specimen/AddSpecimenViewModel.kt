@@ -86,6 +86,23 @@ class AddSpecimenViewModel @Inject constructor(
         }
     }
 
+    fun initializeForDuplicate(specimenId: String) {
+        viewModelScope.launch {
+            try {
+                val specimen = databaseManager.getSpecimen(specimenId)
+                specimen?.let {
+                    // Don't set editingSpecimen - this is a new specimen, not an edit
+                    _formState.value = SpecimenFormState.fromSpecimenForDuplicate(it, _userProfile.value)
+                    // Keep isEditMode = false since this is creating a new specimen
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    saveError = "Failed to load specimen for duplication: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun updateSpecies(species: String) {
         _formState.value = _formState.value.copy(species = species)
         clearValidationError("species")
@@ -463,6 +480,49 @@ data class SpecimenFormState(
                 imageUrls = specimen.imageUrls,
                 isFavorite = specimen.isFavorite,
                 isPublic = specimen.isPublic
+            )
+        }
+
+        /**
+         * Creates a form state for duplicating a specimen.
+         * Excludes: width, height, length, unit, weight, weightUnit, notes, imageUrls,
+         * pricePaid, pricePaidCurrency, estimatedValue, estimatedValueCurrency
+         */
+        fun fromSpecimenForDuplicate(specimen: Specimen, userProfile: com.dmdev.fossilvaultanda.data.models.UserProfile?): SpecimenFormState {
+            return SpecimenFormState(
+                species = specimen.taxonomy.getDisplayName(),
+                geologicalTime = specimen.geologicalTime,
+                element = specimen.element,
+                customElement = "",
+                location = specimen.location ?: "",
+                country = specimen.country,
+                formation = specimen.formation ?: "",
+                latitude = specimen.latitude,
+                longitude = specimen.longitude,
+                // Dimensions excluded - using defaults
+                width = null,
+                height = null,
+                length = null,
+                unit = userProfile?.settings?.unit ?: SizeUnit.MM,
+                weight = null,
+                weightUnit = WeightUnit.GR,
+                // Dates copied
+                collectionDate = specimen.collectionDate,
+                acquisitionDate = specimen.acquisitionDate,
+                acquisitionMethod = specimen.acquisitionMethod,
+                condition = specimen.condition,
+                // Prices excluded - using defaults
+                pricePaid = null,
+                pricePaidCurrency = userProfile?.settings?.defaultCurrency,
+                estimatedValue = null,
+                estimatedValueCurrency = userProfile?.settings?.defaultCurrency,
+                inventoryId = specimen.inventoryId ?: "",
+                notes = "", // Notes excluded
+                storage = specimen.storage,
+                tagNames = specimen.tagNames,
+                imageUrls = emptyList(), // Images excluded
+                isFavorite = false,
+                isPublic = false
             )
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -44,6 +45,7 @@ fun HomeScreen(
     onNavigateToStats: () -> Unit = {},
     onAddSpecimen: () -> Unit = {},
     onEditSpecimen: (String) -> Unit = {},
+    onDuplicateSpecimen: (String) -> Unit = {},
     onNavigateToLimitReached: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
@@ -159,6 +161,10 @@ fun HomeScreen(
                 onEditSpecimen(menuExpandedSpecimenId!!)
                 menuExpandedSpecimenId = null
             },
+            onDuplicateClick = {
+                onDuplicateSpecimen(menuExpandedSpecimenId!!)
+                menuExpandedSpecimenId = null
+            },
             onDeleteClick = {
                 specimenToDelete = menuExpandedSpecimenId
                 menuExpandedSpecimenId = null
@@ -196,6 +202,7 @@ private fun SpecimenActionMenu(
     expanded: Boolean,
     onDismiss: () -> Unit,
     onEditClick: () -> Unit,
+    onDuplicateClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     DropdownMenu(
@@ -211,6 +218,17 @@ private fun SpecimenActionMenu(
                 )
             },
             onClick = onEditClick
+        )
+
+        DropdownMenuItem(
+            text = { Text("Duplicate specimen") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.ContentCopy,
+                    contentDescription = null
+                )
+            },
+            onClick = onDuplicateClick
         )
 
         DropdownMenuItem(

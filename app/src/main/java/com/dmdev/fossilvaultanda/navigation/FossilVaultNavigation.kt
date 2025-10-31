@@ -110,7 +110,10 @@ fun FossilVaultNavigation(
                     navController.navigate(FossilVaultRoute.AddSpecimen())
                 },
                 onEditSpecimen = { specimenId ->
-                    navController.navigate(FossilVaultRoute.AddSpecimen(specimenId))
+                    navController.navigate(FossilVaultRoute.AddSpecimen(specimenId = specimenId, isDuplicate = false))
+                },
+                onDuplicateSpecimen = { specimenId ->
+                    navController.navigate(FossilVaultRoute.AddSpecimen(specimenId = specimenId, isDuplicate = true))
                 },
                 onNavigateToLimitReached = {
                     navController.navigate(FossilVaultRoute.LimitReached)
@@ -250,10 +253,14 @@ fun FossilVaultNavigation(
         composable<FossilVaultRoute.AddSpecimen> { backStackEntry ->
             val route = backStackEntry.toRoute<FossilVaultRoute.AddSpecimen>()
             val viewModel: AddSpecimenViewModel = hiltViewModel()
-            
-            // Initialize for edit mode if specimen ID provided
+
+            // Initialize based on mode
             route.specimenId?.let { specimenId ->
-                viewModel.initializeForEdit(specimenId)
+                if (route.isDuplicate) {
+                    viewModel.initializeForDuplicate(specimenId)
+                } else {
+                    viewModel.initializeForEdit(specimenId)
+                }
             }
             
             AddSpecimenScreen(
