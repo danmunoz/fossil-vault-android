@@ -124,6 +124,11 @@ class AddSpecimenViewModel @Inject constructor(
         clearValidationError("element")
     }
 
+    fun updateCustomElement(customText: String) {
+        _formState.value = _formState.value.copy(customElement = customText)
+        clearValidationError("element")
+    }
+
     fun updateLocation(location: String) {
         _formState.value = _formState.value.copy(location = location)
     }

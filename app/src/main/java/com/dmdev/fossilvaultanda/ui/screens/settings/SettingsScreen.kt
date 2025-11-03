@@ -39,6 +39,7 @@ fun SettingsScreen(
     onNavigateToAuth: () -> Unit = {},
     onNavigateToSizeUnitPicker: () -> Unit = {},
     onNavigateToCurrencyPicker: () -> Unit = {},
+    onNavigateToImportCsv: () -> Unit = {},
     onNavigateToFAQ: () -> Unit = {},
     onNavigateToAbout: () -> Unit = {},
     authenticationManager: AuthenticationManager? = null,
@@ -99,7 +100,8 @@ fun SettingsScreen(
                 authenticationState = authenticationState,
                 onDivideCarboniferousChanged = viewModel::updateDivideCarboniferous,
                 onNavigateToSizeUnitPicker = onNavigateToSizeUnitPicker,
-                onNavigateToCurrencyPicker = onNavigateToCurrencyPicker
+                onNavigateToCurrencyPicker = onNavigateToCurrencyPicker,
+                onNavigateToImportCsv = onNavigateToImportCsv
             )
 
             // Support & Info Section

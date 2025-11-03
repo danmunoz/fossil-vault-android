@@ -53,6 +53,10 @@ sealed class FossilVaultRoute {
     @Serializable
     data object LimitReached : FossilVaultRoute()
 
+    // CSV Import Flow
+    @Serializable
+    data object ImportCsv : FossilVaultRoute()
+
     // Add Specimen Flow
     @Serializable
     data class AddSpecimen(

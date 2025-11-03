@@ -24,6 +24,7 @@ fun ConfigurationSection(
     onDivideCarboniferousChanged: (Boolean) -> Unit,
     onNavigateToSizeUnitPicker: () -> Unit,
     onNavigateToCurrencyPicker: () -> Unit,
+    onNavigateToImportCsv: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isAuthenticated = authenticationState == AuthenticationState.AUTHENTICATED || authenticationState == AuthenticationState.LOCAL_USER
@@ -78,6 +79,20 @@ fun ConfigurationSection(
             enabled = isAuthenticated,
             isLocked = !isAuthenticated,
             onClick = onNavigateToCurrencyPicker
+        )
+
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant,
+            modifier = Modifier.padding(vertical = FossilVaultSpacing.xs)
+        )
+
+        // Import from CSV
+        SettingNavigationItem(
+            title = "Import from CSV",
+            subtitle = "Import specimens from a CSV file",
+            enabled = isAuthenticated,
+            isLocked = !isAuthenticated,
+            onClick = onNavigateToImportCsv
         )
     }
 }

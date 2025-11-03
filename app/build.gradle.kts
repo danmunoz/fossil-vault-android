@@ -16,8 +16,8 @@ android {
         applicationId = "com.dmdev.fossilvaultanda"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -94,6 +94,9 @@ dependencies {
     
     // Image loading
     implementation(libs.coil.compose)
+
+    // CSV parsing
+    implementation(libs.commons.csv)
 
     // Note: Using built-in Compose gesture detection for zoom/pan functionality instead of external library
 

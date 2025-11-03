@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -97,22 +98,22 @@ fun ElementPickerScreen(
                     isSelected = element == selectedElement,
                     onClick = {
                         if (element == FossilElement.OTHER) {
-                            // Don't navigate back immediately for "Other" - let user enter custom text
-                            onElementSelected(element, customText)
+                            // Don't navigate back immediately for "Other" - just select it
+                            // User will enter text and click Done button
                         } else {
                             onElementSelected(element, "")
                         }
                     }
                 )
-                
+
                 // Show custom text field when "Other" is selected
                 if (element == FossilElement.OTHER && element == selectedElement) {
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = customText,
-                        onValueChange = { 
+                        onValueChange = {
                             customText = it
-                            onElementSelected(element, it)
+                            // Don't call onElementSelected here - just update local state
                         },
                         label = { Text("Specify element type") },
                         placeholder = { Text("e.g., Scale, Gastralia, etc.") },
@@ -122,9 +123,30 @@ fun ElementPickerScreen(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
-                            onDone = { focusManager.clearFocus() }
+                            onDone = {
+                                focusManager.clearFocus()
+                                if (customText.isNotBlank()) {
+                                    onElementSelected(element, customText)
+                                }
+                            }
                         )
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            if (customText.isNotBlank()) {
+                                onElementSelected(element, customText)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimensions.medium),
+                        enabled = customText.isNotBlank()
+                    ) {
+                        Text("Done")
+                    }
                 }
             }
             

@@ -164,6 +164,9 @@ fun FossilVaultNavigation(
                 onNavigateToCurrencyPicker = {
                     navController.navigate(FossilVaultRoute.CurrencyPicker)
                 },
+                onNavigateToImportCsv = {
+                    navController.navigate(FossilVaultRoute.ImportCsv)
+                },
                 onNavigateToFAQ = {
                     navController.navigate(FossilVaultRoute.FAQ)
                 },
@@ -244,6 +247,21 @@ fun FossilVaultNavigation(
             LimitReachedScreen(
                 onNavigateBack = {
                     navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        // CSV Import Flow
+        composable<FossilVaultRoute.ImportCsv> {
+            com.dmdev.fossilvaultanda.ui.screens.csvimport.ImportScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onImportComplete = {
+                    navController.navigate(FossilVaultRoute.Home) {
+                        popUpTo(FossilVaultRoute.Home) { inclusive = false }
+                    }
                 },
                 modifier = Modifier.fillMaxSize()
             )
@@ -351,6 +369,9 @@ fun FossilVaultNavigation(
                 },
                 onElementSelected = { element, customText ->
                     addSpecimenViewModel.updateElement(element)
+                    if (element == com.dmdev.fossilvaultanda.data.models.enums.FossilElement.OTHER) {
+                        addSpecimenViewModel.updateCustomElement(customText)
+                    }
                     navController.navigateUp()
                 },
                 selectedElement = formState.element,
