@@ -97,11 +97,47 @@ class FirestoreDataRepository @Inject constructor(
     }
     
     private suspend fun getUserId(): String {
-        return authManager.getCurrentUserId() 
+        return authManager.getCurrentUserId()
             ?: throw DataException.AuthenticationException("No user logged in")
     }
-    
-    
+
+    override suspend fun checkInventoryIdExists(inventoryId: String?, excludingSpecimenId: String?): Boolean = withContext(Dispatchers.IO) {
+        // Return false if inventory ID is null or empty
+        if (inventoryId.isNullOrBlank()) {
+            return@withContext false
+        }
+
+        try {
+            val userId = getUserId()
+            val lowercaseInventoryId = inventoryId.lowercase().trim()
+
+            // Query all specimens for this user
+            val querySnapshot = firestore.collection("specimens")
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            // Check for case-insensitive matches
+            for (document in querySnapshot.documents) {
+                // Skip the specimen we're updating (if any)
+                if (excludingSpecimenId != null && document.id == excludingSpecimenId) {
+                    continue
+                }
+
+                val existingInventoryId = document.getString("inventoryId")
+                if (!existingInventoryId.isNullOrBlank() &&
+                    existingInventoryId.lowercase().trim() == lowercaseInventoryId) {
+                    return@withContext true
+                }
+            }
+
+            false
+        } catch (e: Exception) {
+            Log.e("FirestoreRepo", "Error checking inventory ID", e)
+            false
+        }
+    }
+
     private fun setupFirestoreListeners() {
         coroutineScope.launch {
             try {
@@ -196,26 +232,35 @@ class FirestoreDataRepository @Inject constructor(
     override suspend fun save(specimen: Specimen): Unit = withContext(Dispatchers.IO) {
         try {
             specimen.validate().getOrThrow()
-            
+
+            // Check for duplicate inventory ID
+            if (checkInventoryIdExists(specimen.inventoryId)) {
+                throw DataException.DuplicateInventoryIdException()
+            }
+
             var updatedSpecimen = specimen
-            
+
             // Handle local images
             val localImages = specimen.imageUrls.filter { it.isLocal }
             if (localImages.isNotEmpty()) {
                 val imageDataList = localImages.mapNotNull { image ->
                     loadImageData(image.url)
                 }
-                
+
                 val remoteImages = imageStoring.uploadImages(imageDataList, "specimen")
                 val existingRemoteUrls = specimen.imageUrls.filter { !it.isLocal }
                 updatedSpecimen = specimen.copy(imageUrls = existingRemoteUrls + remoteImages)
             }
-            
+
             firestore.collection("specimens")
                 .document(updatedSpecimen.id)
                 .set(updatedSpecimen.toFirestoreMap())
                 .await()
         } catch (e: Exception) {
+            // Re-throw DuplicateInventoryIdException as is
+            if (e is DataException.DuplicateInventoryIdException) {
+                throw e
+            }
             throw DataException.FirestoreException("Failed to save specimen", e)
         }
     }
@@ -223,24 +268,49 @@ class FirestoreDataRepository @Inject constructor(
     override suspend fun update(specimen: Specimen): Unit = withContext(Dispatchers.IO) {
         try {
             val existingSpecimen = getSpecimen(specimen.id)
-            
+
             if (existingSpecimen == null) {
                 save(specimen)
                 return@withContext
             }
-            
+
+            // Check for duplicate inventory ID, excluding the current specimen
+            if (checkInventoryIdExists(specimen.inventoryId, excludingSpecimenId = specimen.id)) {
+                throw DataException.DuplicateInventoryIdException()
+            }
+
             // Find removed images
             val imagesToRemove = existingSpecimen.imageUrls.filter { oldImage ->
                 !specimen.imageUrls.contains(oldImage) && !oldImage.isLocal
             }
-            
+
             // Delete removed images
             if (imagesToRemove.isNotEmpty()) {
                 imageStoring.deleteImages(imagesToRemove)
             }
-            
-            save(specimen)
+
+            // Handle local images and save
+            var updatedSpecimen = specimen
+            val localImages = specimen.imageUrls.filter { it.isLocal }
+            if (localImages.isNotEmpty()) {
+                val imageDataList = localImages.mapNotNull { image ->
+                    loadImageData(image.url)
+                }
+
+                val remoteImages = imageStoring.uploadImages(imageDataList, "specimen")
+                val existingRemoteUrls = specimen.imageUrls.filter { !it.isLocal }
+                updatedSpecimen = specimen.copy(imageUrls = existingRemoteUrls + remoteImages)
+            }
+
+            firestore.collection("specimens")
+                .document(updatedSpecimen.id)
+                .set(updatedSpecimen.toFirestoreMap())
+                .await()
         } catch (e: Exception) {
+            // Re-throw DuplicateInventoryIdException as is
+            if (e is DataException.DuplicateInventoryIdException) {
+                throw e
+            }
             throw DataException.FirestoreException("Failed to update specimen", e)
         }
     }

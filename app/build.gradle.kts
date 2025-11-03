@@ -96,7 +96,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     // Note: Using built-in Compose gesture detection for zoom/pan functionality instead of external library
-    
+
     // Material Icons Extended
     implementation(libs.androidx.material.icons.extended)
     

@@ -20,6 +20,7 @@ interface DatabaseManaging {
     suspend fun deleteSpecimen(identifier: String)
     suspend fun getSpecimenCount(): Int
     suspend fun getStorageUsage(): Long
+    suspend fun checkInventoryIdExists(inventoryId: String?, excludingSpecimenId: String? = null): Boolean
     
     // Tag operations
     suspend fun save(tag: Tag)

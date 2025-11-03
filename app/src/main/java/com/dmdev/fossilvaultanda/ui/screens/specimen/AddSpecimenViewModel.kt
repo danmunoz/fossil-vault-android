@@ -207,6 +207,7 @@ class AddSpecimenViewModel @Inject constructor(
 
     fun updateInventoryId(inventoryId: String) {
         _formState.value = _formState.value.copy(inventoryId = inventoryId)
+        clearValidationError("inventoryId")
     }
 
     fun updateNotes(notes: String) {
@@ -249,7 +250,7 @@ class AddSpecimenViewModel @Inject constructor(
     fun saveSpecimen() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true, saveError = null)
-            
+
             try {
                 val currentProfile = _userProfile.value
                 if (currentProfile == null) {
@@ -270,7 +271,7 @@ class AddSpecimenViewModel @Inject constructor(
 
                 // Create specimen from form state
                 val specimen = createSpecimenFromForm(currentProfile.userId)
-                
+
                 // Save to repository
                 if (editingSpecimen != null) {
                     databaseManager.update(specimen)
@@ -282,6 +283,12 @@ class AddSpecimenViewModel @Inject constructor(
                     isSaving = false,
                     saveSuccess = true
                 )
+            } catch (e: com.dmdev.fossilvaultanda.data.models.DataException.DuplicateInventoryIdException) {
+                // Handle duplicate inventory ID error
+                val errors = _validationErrors.value.toMutableMap()
+                errors["inventoryId"] = e.message ?: "A specimen with this inventory ID already exists"
+                _validationErrors.value = errors
+                _uiState.value = _uiState.value.copy(isSaving = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
