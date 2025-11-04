@@ -13,9 +13,9 @@ data class UsageLimits(
         fun forTier(tier: SubscriptionTier): UsageLimits {
             return when (tier) {
                 SubscriptionTier.FREE -> UsageLimits(
-                    maxSpecimens = 6,
-                    maxPhotosPerSpecimen = 3,
-                    maxStorageBytes = 200L * 1024 * 1024 // 200 MB
+                    maxSpecimens = 15,
+                    maxPhotosPerSpecimen = 5,
+                    maxStorageBytes = 500L * 1024 * 1024 // 500 MB
                 )
                 SubscriptionTier.PRO -> UsageLimits(
                     maxSpecimens = Int.MAX_VALUE, // Unlimited
