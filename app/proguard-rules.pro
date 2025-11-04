@@ -50,3 +50,78 @@
 # Keep Application class and its Hilt generated subclass
 -keep class com.dmdev.fossilvaultanda.FossilVaultApplication { *; }
 -keep class com.dmdev.fossilvaultanda.Hilt_FossilVaultApplication { *; }
+
+# ================================
+# Firebase/Firestore Keep Rules
+# ================================
+
+# Keep all Firestore model classes and their fields
+# This is CRITICAL for Firestore deserialization to work in release builds
+-keep class com.dmdev.fossilvaultanda.data.models.** { *; }
+-keepclassmembers class com.dmdev.fossilvaultanda.data.models.** { *; }
+
+# Keep geological time classes (different package)
+-keep class com.fossilVault.geological.** { *; }
+-keepclassmembers class com.fossilVault.geological.** { *; }
+
+# Keep Room database entities
+-keep class com.dmdev.fossilvaultanda.data.local.** { *; }
+-keepclassmembers class com.dmdev.fossilvaultanda.data.local.** { *; }
+
+# Keep all enum classes and their fields
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+    <fields>;
+}
+
+# Keep Kotlin data class generated methods
+-keep class kotlin.Metadata { *; }
+-keepclassmembers class ** {
+    @kotlinx.serialization.Serializable <fields>;
+}
+
+# Keep attributes needed for reflection
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+
+# Keep Firestore DocumentSnapshot conversion
+-keepclassmembers class * {
+    @com.google.firebase.firestore.PropertyName <fields>;
+    @com.google.firebase.firestore.Exclude <fields>;
+    @com.google.firebase.firestore.ServerTimestamp <fields>;
+}
+
+# Keep serialization annotations
+-keepattributes AnnotationDefault
+
+# Kotlinx Serialization support
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keep,includedescriptorclasses class com.dmdev.fossilvaultanda.**$$serializer { *; }
+-keepclassmembers class com.dmdev.fossilvaultanda.** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.dmdev.fossilvaultanda.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# Keep companion objects for enums with serialization
+-keepclassmembers class * {
+    public static ** Companion;
+}
+
+# Keep source file names and line numbers for better crash reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# Firebase specific rules (defensive - Firebase includes its own, but be explicit)
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.firebase.**
+-dontwarn com.google.android.gms.**

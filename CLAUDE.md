@@ -121,6 +121,8 @@ app/
 ## Architecture Guidelines
 
 ### Current State
+**Version**: 1.0.0 (Build 7) - Submitted to Google Play Store
+
 - **Architecture**: MVVM with Hilt dependency injection fully implemented
 - **Authentication**: Complete Firebase Auth system with email/password signup/login
 - **Data Layer**: Repository pattern with Firestore and Room database integration
@@ -130,6 +132,9 @@ app/
 - **Firebase**: Firestore, Authentication, and Storage fully configured and operational
 - **Image Management**: Multi-image gallery with full-screen viewer, zoom, and carousel navigation
 - **User Features**: Profile management, settings configuration, subscription limits, FAQ/support
+- **Export**: CSV export functionality for collection data
+- **Limits**: Free tier usage limits with duplicate validation and upgrade prompts
+- **Release Status**: First version submitted for Play Store review
 
 ### Implementation Approach
 The Android app should maintain feature parity with the iOS version while following Android design patterns:
@@ -163,16 +168,21 @@ The Android app should maintain feature parity with the iOS version while follow
    - ✅ **Settings**: Currency preferences, size units, app configuration
    - ✅ **Statistics Dashboard**: Analytics and collection insights
    - ✅ **Support**: FAQ, About screens with app information
-   - 🚧 **Subscription/Limits**: Usage limits and upgrade prompts (in progress)
+   - ✅ **Subscription/Limits**: Free tier usage limits with upgrade prompts and duplicate validation
+   - ✅ **CSV Export**: Export collection data to CSV format
    - ⏳ **Location Picker**: Google Maps integration for specimen discovery sites
-   - ⏳ **Export Functionality**: CSV, ZIP export of collection data
+   - ⏳ **ZIP Export**: Export collection with images in ZIP archive
 
 ## Recent Updates
 
-### Latest Features (v0.5 - Current)
-- **Enhanced Detail Screen**: Improved image viewer with zoomable images, full-screen carousel navigation, and thumbnail preview
-- **Refined Home UI**: Added comprehensive empty state views, improved navigation buttons, grid/list toggle
-- **Subscription System**: Base structure for usage limits with LimitReachedScreen
+### Latest Features (v1.0.0 - Current)
+- **Play Store Submission**: App submitted for first Google Play review
+- **CSV Export**: Complete CSV export functionality for collection data
+- **Subscription & Limits**: Free tier usage limits implemented with upgrade prompts
+- **Duplicate Validation**: Validation to prevent duplicate specimens in collection
+- **Enhanced Statistics**: Improved analytics models and collection insights
+- **Enhanced Detail Screen**: Image viewer with zoomable images, full-screen carousel navigation, and thumbnail preview
+- **Refined Home UI**: Comprehensive empty state views, improved navigation buttons, grid/list toggle
 - **Image Management**: ImageThumbnailCarousel with swipe navigation, FullScreenImageViewer with pinch-to-zoom
 - **UI Polish**: Improved specimen cards, better spacing and visual hierarchy across all screens
 
@@ -227,7 +237,7 @@ The Android app should maintain feature parity with the iOS version while follow
 
 ## Development Workflow
 
-### Completed (Phase 1-7)
+### Completed (Phase 1-9)
 1. ✅ **Design System**: Complete Material3 theme with geological period colors, typography, spacing
 2. ✅ **Data Models**: Full specimen model with Firebase/Room integration, 25+ fields
 3. ✅ **Authentication**: Email/password auth with profile management
@@ -237,19 +247,22 @@ The Android app should maintain feature parity with the iOS version while follow
 7. ✅ **User Management**: Profile screen, edit profile, settings (currency, units, preferences)
 8. ✅ **Statistics**: Stats dashboard with collection analytics
 9. ✅ **Support**: FAQ and About screens
+10. ✅ **Subscription & Limits**: Free tier usage limits, upgrade prompts, duplicate validation
+11. ✅ **CSV Export**: Collection data export to CSV format
+12. ✅ **Play Store Submission**: App submitted for first review (v1.0.0)
 
-### In Progress (Phase 8)
-10. 🚧 **Subscription & Monetization**: Usage limits, upgrade prompts, subscription management
-11. 🚧 **Advanced Image Features**: Image editing, annotation capabilities
-12. 🚧 **Dark Theme Refinement**: Polishing dark mode across all screens
+### In Progress (Phase 10)
+13. 🚧 **Play Store Approval**: Addressing review feedback and preparing for public release
+14. 🚧 **Advanced Image Features**: Image editing, annotation capabilities
+15. 🚧 **Dark Theme Refinement**: Polishing dark mode across all screens
 
-### Next Steps (Phase 9-10)
-13. ⏳ **Google Maps Integration**: Interactive map for specimen discovery locations
-14. ⏳ **Export Functionality**: CSV and ZIP export of collection data with images
-15. ⏳ **Advanced Search**: Multi-criteria search, saved searches, search history
-16. ⏳ **Testing & Quality**: Comprehensive unit/UI tests, performance optimization
-17. ⏳ **Accessibility**: Screen reader support, keyboard navigation, contrast improvements
-18. ⏳ **Release Preparation**: Play Store listing, release builds, beta testing
+### Next Steps (Phase 11-12)
+16. ⏳ **Google Maps Integration**: Interactive map for specimen discovery locations
+17. ⏳ **ZIP Export**: Export collection with images in ZIP archive
+18. ⏳ **Advanced Search**: Multi-criteria search, saved searches, search history
+19. ⏳ **Testing & Quality**: Comprehensive unit/UI tests, performance optimization
+20. ⏳ **Accessibility**: Screen reader support, keyboard navigation, contrast improvements
+21. ⏳ **Post-Launch Features**: User feedback integration, feature enhancements
 
 ## Firebase Configuration
 ✅ **Firebase Setup Complete**: All core services configured and operational
@@ -269,12 +282,15 @@ The Android app should maintain feature parity with the iOS version while follow
 - ✅ **User Profile**: Account management and profile editing
 - ✅ **Settings**: Currency preferences (25 currencies), size units, app configuration
 - ✅ **Statistics**: Collection analytics and insights dashboard
+- ✅ **CSV Export**: Export collection data to CSV format
+- ✅ **Usage Limits**: Free tier limits with upgrade prompts
+- ✅ **Duplicate Prevention**: Validation to prevent duplicate specimens
 
 ### Missing Features (vs iOS)
 - ⏳ **GPS Location Tracking**: Interactive maps for specimen discovery sites
-- ⏳ **Export Functionality**: CSV and ZIP export capabilities
+- ⏳ **ZIP Export**: Export collection with images in ZIP archive
 - ⏳ **Advanced Filtering**: Multi-criteria filters, saved searches
-- ⏳ **Subscription/Monetization**: Payment integration, premium features
+- ⏳ **Payment Integration**: In-app purchases for premium features
 
 ### Android-Specific Enhancements
 - Material3 design language with dynamic theming support
@@ -283,7 +299,11 @@ The Android app should maintain feature parity with the iOS version while follow
 - Support for Android share sheet and intents
 
 ## App Store & Distribution
+- **Current Version**: v1.0.0 (Build 7)
+- **Status**: Submitted to Google Play Store for first review
 - **Privacy Policy**: Hosted at https://fossilvault.app/privacy/ for Google Play compliance
 - **Camera Permissions**: Privacy policy covers camera usage for specimen photography
 - **Location Permissions**: GPS tracking for fossil discovery sites covered in privacy policy
-- **Target Platforms**: iOS (production), Android (beta development)
+- **Target Platforms**:
+  - iOS: Production (App Store)
+  - Android: Beta testing / First review (Google Play Store)
