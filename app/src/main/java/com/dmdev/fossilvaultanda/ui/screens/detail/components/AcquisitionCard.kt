@@ -175,7 +175,7 @@ fun AcquisitionCardPreview() {
                     id = "2",
                     userId = "user1",
                     taxonomy = Taxonomy.fromSpeciesString("Triceratops horridus"),
-                    element = FossilElement.HORN,
+                    element = FossilElement.BONE,
                     creationDate = Clock.System.now()
                 )
             )

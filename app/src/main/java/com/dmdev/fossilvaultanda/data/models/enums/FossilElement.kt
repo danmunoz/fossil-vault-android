@@ -8,18 +8,16 @@ enum class FossilElement(val displayString: String) {
     @SerialName("tooth") TOOTH("Tooth"),
     @SerialName("jaw") JAW("Jaw"),
     @SerialName("skull") SKULL("Skull"),
+    @SerialName("skeleton") SKELETON("Skeleton"),
     @SerialName("bone") BONE("Bone"),
     @SerialName("claw") CLAW("Claw"),
-    @SerialName("horn") HORN("Horn"),
-    @SerialName("rib") RIB("Rib"),
-    @SerialName("vertebra") VERTEBRA("Vertebra"),
     @SerialName("shell") SHELL("Shell"),
-    @SerialName("ammonite") AMMONITE("Ammonite"),
+    @SerialName("trilobite") TRILOBITE("Trilobite"),
     @SerialName("matrix") MATRIX("Matrix"),
-    @SerialName("coprolite") COPROLITE("Coprolite"),
     @SerialName("imprint") IMPRINT("Imprint"),
-    @SerialName("track") TRACK("Track"),
     @SerialName("egg") EGG("Egg"),
+    @SerialName("urchin") URCHIN("Urchin"),
+    @SerialName("ichnofossil") ICHNOFOSSIL("Ichnofossil"),
     @SerialName("other") OTHER("Other");
     
     /**
@@ -30,18 +28,16 @@ enum class FossilElement(val displayString: String) {
             TOOTH -> "tooth"
             JAW -> "jaw"
             SKULL -> "skull"
+            SKELETON -> "skeleton"
             BONE -> "bone"
             CLAW -> "claw"
-            HORN -> "horn"
-            RIB -> "rib"
-            VERTEBRA -> "vertebra"
             SHELL -> "shell"
-            AMMONITE -> "ammonite"
+            TRILOBITE -> "trilobite"
             MATRIX -> "matrix"
-            COPROLITE -> "coprolite"
             IMPRINT -> "imprint"
-            TRACK -> "track"
             EGG -> "egg"
+            URCHIN -> "urchin"
+            ICHNOFOSSIL -> "ichnofossil"
             OTHER -> "other"
         }
     

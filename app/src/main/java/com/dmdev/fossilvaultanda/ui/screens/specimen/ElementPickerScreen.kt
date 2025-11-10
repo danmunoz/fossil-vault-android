@@ -241,18 +241,16 @@ private fun getElementColor(element: FossilElement): androidx.compose.ui.graphic
         FossilElement.TOOTH -> androidx.compose.ui.graphics.Color(0xFFFFEB3B) // Yellow
         FossilElement.JAW -> androidx.compose.ui.graphics.Color(0xFFFF9800) // Orange
         FossilElement.SKULL -> androidx.compose.ui.graphics.Color(0xFFF44336) // Red
+        FossilElement.SKELETON -> androidx.compose.ui.graphics.Color(0xFFE1E1E1) // Pale Gray
         FossilElement.BONE -> androidx.compose.ui.graphics.Color(0xFFE0E0E0) // Light Gray
         FossilElement.CLAW -> androidx.compose.ui.graphics.Color(0xFF795548) // Brown
-        FossilElement.HORN -> androidx.compose.ui.graphics.Color(0xFF9C27B0) // Purple
-        FossilElement.RIB -> androidx.compose.ui.graphics.Color(0xFFCDDC39) // Lime
-        FossilElement.VERTEBRA -> androidx.compose.ui.graphics.Color(0xFF607D8B) // Blue Gray
         FossilElement.SHELL -> androidx.compose.ui.graphics.Color(0xFF00BCD4) // Cyan
-        FossilElement.AMMONITE -> androidx.compose.ui.graphics.Color(0xFF3F51B5) // Indigo
+        FossilElement.TRILOBITE -> androidx.compose.ui.graphics.Color(0xFF3F51B5) // Indigo
         FossilElement.MATRIX -> androidx.compose.ui.graphics.Color(0xFF8BC34A) // Light Green
-        FossilElement.COPROLITE -> androidx.compose.ui.graphics.Color(0xFF5D4037) // Dark Brown
         FossilElement.IMPRINT -> androidx.compose.ui.graphics.Color(0xFF9E9E9E) // Gray
-        FossilElement.TRACK -> androidx.compose.ui.graphics.Color(0xFF4CAF50) // Green
         FossilElement.EGG -> androidx.compose.ui.graphics.Color(0xFFFFE0B2) // Light Orange
+        FossilElement.URCHIN -> androidx.compose.ui.graphics.Color(0xFF9C27B0) // Purple
+        FossilElement.ICHNOFOSSIL -> androidx.compose.ui.graphics.Color(0xFF4CAF50) // Green
         FossilElement.OTHER -> androidx.compose.ui.graphics.Color(0xFF757575) // Medium Gray
     }
 }
@@ -262,18 +260,16 @@ private fun getElementDescription(element: FossilElement): String {
         FossilElement.TOOTH -> "Fossilized tooth or dental element"
         FossilElement.JAW -> "Jaw bone or mandible"
         FossilElement.SKULL -> "Cranial bones or skull fragments"
+        FossilElement.SKELETON -> "Complete or partial skeleton"
         FossilElement.BONE -> "General skeletal bone element"
         FossilElement.CLAW -> "Claw or ungual phalanx"
-        FossilElement.HORN -> "Horn core or similar projection"
-        FossilElement.RIB -> "Rib bone or costal element"
-        FossilElement.VERTEBRA -> "Spinal vertebra or centrum"
         FossilElement.SHELL -> "Shell or carapace fragment"
-        FossilElement.AMMONITE -> "Cephalopod spiral shell"
+        FossilElement.TRILOBITE -> "Trilobite or arthropod fossil"
         FossilElement.MATRIX -> "Rock matrix with embedded fossils"
-        FossilElement.COPROLITE -> "Fossilized dung or excrement"
         FossilElement.IMPRINT -> "Impression or mold fossil"
-        FossilElement.TRACK -> "Trace fossil or trackway"
         FossilElement.EGG -> "Fossilized egg or eggshell"
+        FossilElement.URCHIN -> "Sea urchin or echinoid fossil"
+        FossilElement.ICHNOFOSSIL -> "Trace fossil or trackway"
         FossilElement.OTHER -> "Other fossil element type"
     }
 }

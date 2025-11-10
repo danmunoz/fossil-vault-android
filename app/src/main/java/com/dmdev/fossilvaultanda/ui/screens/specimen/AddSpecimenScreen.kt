@@ -394,7 +394,7 @@ private fun BasicInformationSection(
         // 2. Anatomical Element
         SelectionField(
             value = if (element != FossilElement.OTHER) element.displayString else customElement,
-            label = "Anatomical Element",
+            label = "Element",
             placeholder = "Select element",
             isRequired = true,
             errorMessage = validationErrors["element"],
