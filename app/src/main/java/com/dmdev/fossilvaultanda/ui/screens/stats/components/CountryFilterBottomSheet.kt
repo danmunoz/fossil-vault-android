@@ -63,7 +63,7 @@ fun CountryFilterBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Regions",
+                    text = "Countries",
                     style = MaterialTheme.typography.headlineSmall
                 )
 
@@ -129,7 +129,7 @@ fun CountryFilterBottomSheet(
                 enabled = availableCountries.isNotEmpty()
             ) {
                 val count = selectedCountries.size
-                val text = if (count == 0) "Show All Regions" else "Apply ($count selected)"
+                val text = if (count == 0) "Show All Countries" else "Apply ($count selected)"
                 Text(text)
             }
         }

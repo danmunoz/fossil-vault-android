@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dmdev.fossilvaultanda.ui.screens.stats.components.CollectionHighlightsCard
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.CountryDistributionChart
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.CountryFilterBottomSheet
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.FilterBar
@@ -101,6 +102,11 @@ fun StatsScreen(
                 onPeriodFilterClick = { showPeriodFilter = true },
                 onCountryFilterClick = { showCountryFilter = true },
                 onResetFilters = { viewModel.resetFilters() }
+            )
+
+            // Collection highlights
+            CollectionHighlightsCard(
+                highlights = uiState.highlights
             )
 
             // Period distribution chart

@@ -60,9 +60,9 @@ data class StatsFilterState(
      */
     val countryFilterDisplayText: String
         get() = when {
-            selectedCountries.isEmpty() -> "All Regions"
+            selectedCountries.isEmpty() -> "All Countries"
             selectedCountries.size == 1 -> selectedCountries.first()
-            else -> "${selectedCountries.size} Regions"
+            else -> "${selectedCountries.size} Countries"
         }
 
     /**
