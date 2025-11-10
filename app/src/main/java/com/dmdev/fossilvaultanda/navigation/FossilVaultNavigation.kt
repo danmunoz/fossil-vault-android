@@ -2,6 +2,7 @@ package com.dmdev.fossilvaultanda.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -272,12 +273,14 @@ fun FossilVaultNavigation(
             val route = backStackEntry.toRoute<FossilVaultRoute.AddSpecimen>()
             val viewModel: AddSpecimenViewModel = hiltViewModel()
 
-            // Initialize based on mode
-            route.specimenId?.let { specimenId ->
-                if (route.isDuplicate) {
-                    viewModel.initializeForDuplicate(specimenId)
-                } else {
-                    viewModel.initializeForEdit(specimenId)
+            // Initialize based on mode - only on first composition
+            LaunchedEffect(route.specimenId, route.isDuplicate) {
+                route.specimenId?.let { specimenId ->
+                    if (route.isDuplicate) {
+                        viewModel.initializeForDuplicate(specimenId)
+                    } else {
+                        viewModel.initializeForEdit(specimenId)
+                    }
                 }
             }
             

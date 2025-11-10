@@ -52,6 +52,9 @@ class AddSpecimenViewModel @Inject constructor(
     // Current editing specimen (for edit mode)
     private var editingSpecimen: Specimen? = null
 
+    // Initialization guard to prevent re-initialization on navigation back
+    private var isInitialized = false
+
     init {
         // Observe user profile for default settings
         viewModelScope.launch {
@@ -70,6 +73,8 @@ class AddSpecimenViewModel @Inject constructor(
     }
 
     fun initializeForEdit(specimenId: String) {
+        if (isInitialized) return  // Prevent re-initialization on navigation back
+
         viewModelScope.launch {
             try {
                 val specimen = databaseManager.getSpecimen(specimenId)
@@ -77,6 +82,7 @@ class AddSpecimenViewModel @Inject constructor(
                     editingSpecimen = it
                     _formState.value = SpecimenFormState.fromSpecimen(it)
                     _uiState.value = _uiState.value.copy(isEditMode = true)
+                    isInitialized = true
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -87,6 +93,8 @@ class AddSpecimenViewModel @Inject constructor(
     }
 
     fun initializeForDuplicate(specimenId: String) {
+        if (isInitialized) return  // Prevent re-initialization on navigation back
+
         viewModelScope.launch {
             try {
                 val specimen = databaseManager.getSpecimen(specimenId)
@@ -94,6 +102,7 @@ class AddSpecimenViewModel @Inject constructor(
                     // Don't set editingSpecimen - this is a new specimen, not an edit
                     _formState.value = SpecimenFormState.fromSpecimenForDuplicate(it, _userProfile.value)
                     // Keep isEditMode = false since this is creating a new specimen
+                    isInitialized = true
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
