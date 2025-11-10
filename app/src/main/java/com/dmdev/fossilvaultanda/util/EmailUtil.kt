@@ -37,7 +37,7 @@ object EmailUtil {
         } catch (e: Exception) {
             // Fallback to opening email with generic intent
             val fallbackIntent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("mailto:hello@fossilvault.app?subject=FossilVault Android Feedback&body=${Uri.encode(deviceInfo)}")
+                data = Uri.parse("mailto:support@fossilvault.app?subject=FossilVault Android Feedback&body=${Uri.encode(deviceInfo)}")
             }
 
             if (fallbackIntent.resolveActivity(context.packageManager) != null) {
