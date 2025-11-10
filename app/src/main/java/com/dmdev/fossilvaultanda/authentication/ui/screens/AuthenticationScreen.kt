@@ -53,7 +53,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dmdev.fossilvaultanda.R
 import com.dmdev.fossilvaultanda.authentication.domain.AuthenticationMode
 import com.dmdev.fossilvaultanda.authentication.ui.AuthenticationViewModel
-import com.dmdev.fossilvaultanda.authentication.ui.components.AuthAnimatedLogo
 import com.dmdev.fossilvaultanda.authentication.ui.components.GradientButton
 import com.dmdev.fossilvaultanda.authentication.ui.components.PasswordStrengthIndicator
 import com.dmdev.fossilvaultanda.authentication.ui.components.ValidatedTextField
@@ -113,14 +112,7 @@ fun AuthenticationScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            
-            // Logo Section
-            AuthAnimatedLogo(
-                animate = !uiState.isLoading
-            )
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
+
             // Header Section with Animated Content
             AnimatedContent(
                 targetState = uiState.mode,

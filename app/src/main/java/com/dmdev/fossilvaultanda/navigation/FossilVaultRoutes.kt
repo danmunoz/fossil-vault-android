@@ -51,6 +51,9 @@ sealed class FossilVaultRoute {
 
     // Subscription Flow
     @Serializable
+    data object Subscription : FossilVaultRoute()
+
+    @Serializable
     data object LimitReached : FossilVaultRoute()
 
     // CSV Import Flow

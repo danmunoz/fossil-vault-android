@@ -35,6 +35,7 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleCurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.stats.StatsScreen
 import com.dmdev.fossilvaultanda.ui.screens.subscription.LimitReachedScreen
+import com.dmdev.fossilvaultanda.ui.screens.subscription.SubscriptionScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.AboutScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.FAQScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
@@ -187,6 +188,9 @@ fun FossilVaultNavigation(
                 onNavigateToEditProfile = {
                     navController.navigate(FossilVaultRoute.EditProfile)
                 },
+                onNavigateToSubscription = {
+                    navController.navigate(FossilVaultRoute.Subscription)
+                },
                 onNavigateToAuth = {
                     navController.navigate(FossilVaultRoute.Authentication)
                 },
@@ -244,6 +248,15 @@ fun FossilVaultNavigation(
         }
 
         // Subscription Flow
+        composable<FossilVaultRoute.Subscription> {
+            SubscriptionScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
         composable<FossilVaultRoute.LimitReached> {
             LimitReachedScreen(
                 onNavigateBack = {

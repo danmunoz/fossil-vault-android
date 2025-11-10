@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,13 +38,13 @@ import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 @Composable
 fun ActionCardsSection(
     authenticationState: AuthenticationState,
+    subscriptionBadge: String?,
     onNavigateToEditProfile: () -> Unit,
     onSubscriptionClick: () -> Unit,
-    onDisplayShelfClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isAnonymous = authenticationState == AuthenticationState.LOCAL_USER
-    
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(FossilVaultSpacing.sm)
@@ -59,24 +58,14 @@ fun ActionCardsSection(
             onClick = onNavigateToEditProfile,
             enabled = !isAnonymous
         )
-        
+
         // Subscription Card
         ActionCard(
             icon = Icons.Default.Star,
             iconColor = Color(0xFFFFD700), // Gold color for crown
             title = "Subscription",
-            badge = "PRO",
+            badge = subscriptionBadge,
             onClick = onSubscriptionClick,
-            enabled = !isAnonymous
-        )
-        
-        // Display Shelf Card
-        ActionCard(
-            icon = Icons.Default.Favorite,
-            iconColor = MaterialTheme.colorScheme.primary,
-            title = "My Display Shelf",
-            badge = null,
-            onClick = onDisplayShelfClick,
             enabled = !isAnonymous
         )
     }
@@ -174,9 +163,9 @@ fun ActionCardsSectionPreview() {
     FossilVaultTheme {
         ActionCardsSection(
             authenticationState = AuthenticationState.AUTHENTICATED,
+            subscriptionBadge = "FREE",
             onNavigateToEditProfile = {},
             onSubscriptionClick = {},
-            onDisplayShelfClick = {},
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -188,9 +177,9 @@ fun ActionCardsSectionAnonymousPreview() {
     FossilVaultTheme {
         ActionCardsSection(
             authenticationState = AuthenticationState.LOCAL_USER,
+            subscriptionBadge = null,
             onNavigateToEditProfile = {},
             onSubscriptionClick = {},
-            onDisplayShelfClick = {},
             modifier = Modifier.padding(16.dp)
         )
     }

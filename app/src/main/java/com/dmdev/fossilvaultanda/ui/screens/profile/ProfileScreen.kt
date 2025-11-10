@@ -36,6 +36,7 @@ import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 fun ProfileScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToEditProfile: () -> Unit = {},
+    onNavigateToSubscription: () -> Unit = {},
     onNavigateToAuth: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
@@ -88,9 +89,9 @@ fun ProfileScreen(
             // Action Cards
             ActionCardsSection(
                 authenticationState = authenticationState,
+                subscriptionBadge = profile?.subscriptionStatus?.tier?.displayName?.uppercase(),
                 onNavigateToEditProfile = onNavigateToEditProfile,
-                onSubscriptionClick = { /* TODO: Navigate to subscription */ },
-                onDisplayShelfClick = { /* TODO: Navigate to display shelf */ }
+                onSubscriptionClick = onNavigateToSubscription
             )
             
             // Account Management
