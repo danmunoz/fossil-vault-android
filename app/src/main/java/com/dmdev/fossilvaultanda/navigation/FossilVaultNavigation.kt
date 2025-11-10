@@ -34,8 +34,8 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.PeriodPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleCurrencyPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.stats.StatsScreen
+import com.dmdev.fossilvaultanda.ui.screens.subscription.ComparePlansScreen
 import com.dmdev.fossilvaultanda.ui.screens.subscription.LimitReachedScreen
-import com.dmdev.fossilvaultanda.ui.screens.subscription.SubscriptionScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.AboutScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.FAQScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
@@ -249,7 +249,7 @@ fun FossilVaultNavigation(
 
         // Subscription Flow
         composable<FossilVaultRoute.Subscription> {
-            SubscriptionScreen(
+            ComparePlansScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },
