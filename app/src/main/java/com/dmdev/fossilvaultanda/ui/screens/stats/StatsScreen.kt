@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dmdev.fossilvaultanda.ui.screens.stats.components.CountryDistributionChart
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.CountryFilterBottomSheet
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.FilterBar
 import com.dmdev.fossilvaultanda.ui.screens.stats.components.PeriodDistributionChart
@@ -107,6 +108,13 @@ fun StatsScreen(
                 distribution = uiState.periodDistribution,
                 totalCount = uiState.totalCount,
                 mostCommonPeriod = uiState.mostCommonPeriod
+            )
+
+            // Country distribution chart
+            CountryDistributionChart(
+                distribution = uiState.countryDistribution,
+                totalCount = uiState.countryDistribution.sumOf { it.count },
+                topCountry = uiState.topCountry
             )
         }
     }

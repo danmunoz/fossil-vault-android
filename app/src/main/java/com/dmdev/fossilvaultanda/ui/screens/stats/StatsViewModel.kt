@@ -23,10 +23,12 @@ import kotlin.time.Duration.Companion.days
 data class StatsUiState(
     val filteredSpecimens: List<Specimen> = emptyList(),
     val periodDistribution: List<PeriodDistribution> = emptyList(),
+    val countryDistribution: List<CountryDistribution> = emptyList(),
     val availableCountries: List<String> = emptyList(),
     val filterState: StatsFilterState = StatsFilterState(),
     val totalCount: Int = 0,
-    val mostCommonPeriod: GeologicalPeriod? = null
+    val mostCommonPeriod: GeologicalPeriod? = null,
+    val topCountry: String? = null
 )
 
 @HiltViewModel
@@ -77,15 +79,21 @@ class StatsViewModel @Inject constructor(
 
         // Calculate period distribution
         val periods = filtered.mapNotNull { it.geologicalTime.period }
-        val distribution = PeriodDistribution.fromPeriods(periods)
+        val periodDistribution = PeriodDistribution.fromPeriods(periods)
+
+        // Calculate country distribution
+        val countries = filtered.mapNotNull { it.country }.filter { it.isNotBlank() }
+        val countryDistribution = CountryDistribution.fromCountries(countries)
 
         return StatsUiState(
             filteredSpecimens = filtered,
-            periodDistribution = distribution,
+            periodDistribution = periodDistribution,
+            countryDistribution = countryDistribution,
             availableCountries = availableCountries,
             filterState = filters,
             totalCount = filtered.size,
-            mostCommonPeriod = distribution.firstOrNull()?.period
+            mostCommonPeriod = periodDistribution.firstOrNull()?.period,
+            topCountry = countryDistribution.firstOrNull()?.country
         )
     }
 

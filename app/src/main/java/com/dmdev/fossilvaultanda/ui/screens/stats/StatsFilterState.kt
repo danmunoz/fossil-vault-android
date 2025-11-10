@@ -99,3 +99,32 @@ data class PeriodDistribution(
         }
     }
 }
+
+/**
+ * Data class representing the distribution of specimens across countries
+ */
+data class CountryDistribution(
+    val country: String,
+    val count: Int,
+    val percentage: Float
+) {
+    companion object {
+        /**
+         * Calculates country distribution from a list of countries
+         */
+        fun fromCountries(countries: List<String>): List<CountryDistribution> {
+            if (countries.isEmpty()) return emptyList()
+
+            val total = countries.size
+            val grouped = countries.groupingBy { it }.eachCount()
+
+            return grouped.map { (country, count) ->
+                CountryDistribution(
+                    country = country,
+                    count = count,
+                    percentage = (count.toFloat() / total.toFloat()) * 100f
+                )
+            }.sortedByDescending { it.count }
+        }
+    }
+}
