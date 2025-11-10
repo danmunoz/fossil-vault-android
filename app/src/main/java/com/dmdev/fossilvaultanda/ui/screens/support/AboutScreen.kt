@@ -1,7 +1,7 @@
 package com.dmdev.fossilvaultanda.ui.screens.support
 
 import android.content.pm.PackageManager
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Photo
@@ -39,11 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dmdev.fossilvaultanda.ui.screens.settings.components.SettingNavigationItem
+import com.dmdev.fossilvaultanda.R
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultSpacing
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultTheme
 import com.dmdev.fossilvaultanda.util.WebViewUtil
@@ -101,23 +100,12 @@ fun AboutScreen(
         ) {
             Spacer(modifier = Modifier.height(FossilVaultSpacing.xl))
 
-            // App Icon - Using Material3 icon as placeholder for app icon
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(16.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Apps,
-                    contentDescription = "FossilVault App Icon",
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
+            // App Logo
+            Image(
+                painter = painterResource(id = R.drawable.logo_fossil_vault),
+                contentDescription = "FossilVault App Logo",
+                modifier = Modifier.size(100.dp)
+            )
 
             Spacer(modifier = Modifier.height(FossilVaultSpacing.md))
 
