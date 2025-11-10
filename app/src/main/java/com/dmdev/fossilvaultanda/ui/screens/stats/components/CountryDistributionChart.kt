@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.dmdev.fossilvaultanda.ui.screens.stats.CountryDistribution
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultSpacing
+import com.dmdev.fossilvaultanda.util.CountryUtils
 
 /**
  * Card component displaying country distribution as a horizontal bar chart
@@ -104,7 +105,7 @@ fun CountryDistributionChart(
 
                     StatItem(
                         label = "Top Country",
-                        value = topCountry ?: "N/A"
+                        value = topCountry?.let { CountryUtils.getLocalizedCountryName(it) } ?: "N/A"
                     )
                 }
             }
@@ -140,7 +141,7 @@ private fun CountryBarItem(
     ) {
         // Country name
         Text(
-            text = distribution.country,
+            text = CountryUtils.getLocalizedCountryName(distribution.country),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

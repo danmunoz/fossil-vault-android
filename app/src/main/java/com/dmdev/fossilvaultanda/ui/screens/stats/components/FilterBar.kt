@@ -1,7 +1,6 @@
 package com.dmdev.fossilvaultanda.ui.screens.stats.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,7 +65,7 @@ fun FilterBar(
                 }
             }
 
-            // Filter chips row
+            // Filter chips - first row with time and period filters
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,7 +85,15 @@ fun FilterBar(
                     isSelected = filterState.selectedPeriods.isNotEmpty(),
                     onClick = onPeriodFilterClick
                 )
+            }
 
+            // Filter chips - second row with country filter
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = FossilVaultSpacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(FossilVaultSpacing.sm)
+            ) {
                 FilterButton(
                     icon = Icons.Default.Public,
                     label = filterState.countryFilterDisplayText,

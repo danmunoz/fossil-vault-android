@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import com.dmdev.fossilvaultanda.ui.theme.FossilVaultSpacing
+import com.dmdev.fossilvaultanda.util.CountryUtils
 
 /**
  * Bottom sheet for selecting countries/regions (multi-select)
@@ -166,7 +167,7 @@ private fun CountryCheckboxItem(
         )
 
         Text(
-            text = country,
+            text = CountryUtils.getLocalizedCountryName(country),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = FossilVaultSpacing.md)
         )
