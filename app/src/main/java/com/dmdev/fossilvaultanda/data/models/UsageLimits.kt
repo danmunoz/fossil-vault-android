@@ -15,7 +15,7 @@ data class UsageLimits(
                 SubscriptionTier.FREE -> UsageLimits(
                     maxSpecimens = 15,
                     maxPhotosPerSpecimen = 5,
-                    maxStorageBytes = 500L * 1024 * 1024 // 500 MB
+                    maxStorageBytes = 250L * 1024 * 1024 // 500 MB
                 )
                 SubscriptionTier.PRO -> UsageLimits(
                     maxSpecimens = Int.MAX_VALUE, // Unlimited

@@ -66,7 +66,7 @@ fun ActionCardsSection(
             title = "Subscription",
             badge = subscriptionBadge,
             onClick = onSubscriptionClick,
-            enabled = !isAnonymous
+            enabled = true
         )
     }
 }

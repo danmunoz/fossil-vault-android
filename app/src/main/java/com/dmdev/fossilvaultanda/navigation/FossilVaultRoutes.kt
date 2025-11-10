@@ -51,6 +51,9 @@ sealed class FossilVaultRoute {
 
     // Subscription Flow
     @Serializable
+    data object SubscriptionStatus : FossilVaultRoute()
+
+    @Serializable
     data object Subscription : FossilVaultRoute()
 
     @Serializable

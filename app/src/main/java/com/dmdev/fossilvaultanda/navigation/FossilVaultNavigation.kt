@@ -36,6 +36,7 @@ import com.dmdev.fossilvaultanda.ui.screens.specimen.SimpleSizeUnitPickerScreen
 import com.dmdev.fossilvaultanda.ui.screens.stats.StatsScreen
 import com.dmdev.fossilvaultanda.ui.screens.subscription.ComparePlansScreen
 import com.dmdev.fossilvaultanda.ui.screens.subscription.LimitReachedScreen
+import com.dmdev.fossilvaultanda.ui.screens.subscription.SubscriptionStatusScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.AboutScreen
 import com.dmdev.fossilvaultanda.ui.screens.support.FAQScreen
 import com.dmdev.fossilvaultanda.ui.screens.welcome.WelcomeScreen
@@ -189,7 +190,7 @@ fun FossilVaultNavigation(
                     navController.navigate(FossilVaultRoute.EditProfile)
                 },
                 onNavigateToSubscription = {
-                    navController.navigate(FossilVaultRoute.Subscription)
+                    navController.navigate(FossilVaultRoute.SubscriptionStatus)
                 },
                 onNavigateToAuth = {
                     navController.navigate(FossilVaultRoute.Authentication)
@@ -248,6 +249,17 @@ fun FossilVaultNavigation(
         }
 
         // Subscription Flow
+        composable<FossilVaultRoute.SubscriptionStatus> {
+            SubscriptionStatusScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+                onNavigateToComparePlans = {
+                    navController.navigate(FossilVaultRoute.Subscription)
+                }
+            )
+        }
+
         composable<FossilVaultRoute.Subscription> {
             ComparePlansScreen(
                 onNavigateBack = {
