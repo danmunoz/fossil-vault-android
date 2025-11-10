@@ -109,6 +109,25 @@ fun FossilVaultNavigation(
                 onNavigateToStats = {
                     navController.navigate(FossilVaultRoute.Stats)
                 },
+                onNavigateToProfile = {
+                    navController.navigate(FossilVaultRoute.Profile)
+                },
+                onSignOut = {
+                    coroutineScope.launch {
+                        authenticationManager.signOut()
+                        navController.navigate(FossilVaultRoute.Welcome) {
+                            popUpTo(FossilVaultRoute.Home) { inclusive = true }
+                        }
+                    }
+                },
+                onDeleteAccount = {
+                    coroutineScope.launch {
+                        authenticationManager.deleteAccount()
+                        navController.navigate(FossilVaultRoute.Welcome) {
+                            popUpTo(FossilVaultRoute.Home) { inclusive = true }
+                        }
+                    }
+                },
                 onAddSpecimen = {
                     navController.navigate(FossilVaultRoute.AddSpecimen())
                 },
