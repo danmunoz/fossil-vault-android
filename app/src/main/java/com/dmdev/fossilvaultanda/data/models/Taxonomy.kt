@@ -83,16 +83,7 @@ data class Taxonomy(
          * Used for backward compatibility with legacy data
          */
         fun fromSpeciesString(speciesString: String): Taxonomy {
-            // Try to parse genus and species if it looks like "Genus species"
-            val parts = speciesString.trim().split(" ")
-            return if (parts.size >= 2) {
-                Taxonomy(
-                    genus = parts[0],
-                    species = parts.drop(1).joinToString(" ")
-                )
-            } else {
-                Taxonomy(species = speciesString.trim())
-            }
+            return Taxonomy(species = speciesString.trim())
         }
 
         /**
