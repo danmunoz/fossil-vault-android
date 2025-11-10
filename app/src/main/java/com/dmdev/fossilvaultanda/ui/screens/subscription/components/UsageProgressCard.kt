@@ -44,7 +44,7 @@ fun UsageProgressCard(
         limit == null -> "Unlimited"
         isAtLimit -> "Limit reached"
         isNearLimit -> "Nearly at limit"
-        else -> "${limit - current} remaining"
+        else -> "${formatValue(limit - current)} remaining"
     }
 
     val progressColor = when {

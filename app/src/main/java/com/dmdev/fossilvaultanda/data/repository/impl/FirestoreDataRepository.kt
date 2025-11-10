@@ -391,13 +391,13 @@ class FirestoreDataRepository @Inject constructor(
     override suspend fun getStorageUsage(): Long = withContext(Dispatchers.IO) {
         try {
             val specimens = getAllSpecimens()
-            var totalBytes = 0L
 
-            specimens.forEach { specimen ->
-                // Estimate storage based on image count and average size
-                // This is a simple estimation - in a real app you'd track actual file sizes
-                totalBytes += specimen.imageUrls.size * (2 * 1024 * 1024) // 2MB per image estimate
-            }
+            // Calculate actual storage by summing the size property from each StoredImage
+            // The size is stored in bytes when images are uploaded
+            val totalBytes = specimens
+                .flatMap { it.imageUrls }           // Get all images from all specimens
+                .mapNotNull { it.size }             // Extract size in bytes (null-safe)
+                .sumOf { it.toLong() }              // Sum all sizes as Long
 
             totalBytes
         } catch (e: Exception) {
